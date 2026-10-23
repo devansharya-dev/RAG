@@ -1,0 +1,47 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment files
+.env
+.env.*
+*.env
+!.env.example
+
+# Tool and test caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Local data storage (preserve directory structure via .gitkeep)
+data/chroma_db/*
+!data/chroma_db/.gitkeep
+data/documents/*
+!data/documents/.gitkeep
+data/cache/*
+!data/cache/.gitkeep
+data/evaluation/*
+!data/evaluation/.gitkeep
+
+# Logs
+logs/*
+!logs/.gitkeep
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor folders
+.vscode/
+.idea/
