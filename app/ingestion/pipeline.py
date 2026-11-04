@@ -104,7 +104,7 @@ class IngestionPipeline:
             if existing:
                 document_id = str(existing[0]["id"])
 
-                # Clear previous partial ingestion before retrying.
+                # Remove old partial chunks before retrying.
                 client.table("document_chunks").delete().eq(
                     "document_id", document_id
                 ).execute()
@@ -190,7 +190,19 @@ class IngestionPipeline:
             )
 
         except Exception as exc:
+            cleanup_error: Exception | None = None
+
             if document_id is not None:
+                # Compensating cleanup: remove any chunks inserted before
+                # the failure, but preserve the document row for retries.
+                try:
+                    client.table("document_chunks").delete().eq(
+                        "document_id", document_id
+                    ).execute()
+                except Exception as cleanup_exc:
+                    cleanup_error = cleanup_exc
+
+                # Keep the document record so the same content can retry.
                 try:
                     client.table("documents").update(
                         {"status": "failed"}
@@ -198,6 +210,13 @@ class IngestionPipeline:
                 except Exception:
                     pass
 
-            raise RuntimeError(
+            error_message = (
                 f"Ingestion failed for '{path.name}': {exc}"
-            ) from exc
+            )
+
+            if cleanup_error is not None:
+                error_message += (
+                    f". Partial chunk cleanup also failed: {cleanup_error}"
+                )
+
+            raise RuntimeError(error_message) from exc

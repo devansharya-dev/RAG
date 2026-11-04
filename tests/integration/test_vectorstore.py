@@ -152,7 +152,7 @@ def test_vectorstore_implements_base_class():
 
 @pytest.mark.integration
 def test_client_is_created_lazily():
-    store = SupabaseVectorStore(
+    vector_store = SupabaseVectorStore(
         supabase_url="https://example.supabase.co",
         supabase_key="test-key",
     )
@@ -162,12 +162,13 @@ def test_client_is_created_lazily():
     ) as mock_create:
         mock_create.return_value = object()
 
-        assert store._client is None
+        assert vector_store._client is None
 
-        first_client = store.client
-        second_client = store.client
+        first_client = vector_store.client
+        second_client = vector_store.client
 
         assert first_client is second_client
+
         mock_create.assert_called_once_with(
             "https://example.supabase.co",
             "test-key",
@@ -176,11 +177,20 @@ def test_client_is_created_lazily():
 
 @pytest.mark.integration
 def test_constructor_rejects_missing_credentials():
-    with pytest.raises(ValueError, match="must be configured"):
-        SupabaseVectorStore(
-            supabase_url="",
-            supabase_key="",
-        )
+    empty_settings = SimpleNamespace(
+        SUPABASE_URL="",
+        SUPABASE_KEY="",
+    )
+
+    with patch(
+        "app.vectorstore.supabase_store.get_settings",
+        return_value=empty_settings,
+    ):
+        with pytest.raises(
+            ValueError,
+            match="must be configured",
+        ):
+            SupabaseVectorStore()
 
 
 @pytest.mark.integration
@@ -189,7 +199,10 @@ def test_add_chunks_inserts_correct_data(store, fake_client):
         metadata={"filename": "test.txt"}
     )
 
-    store.add_chunks([chunk], [make_embedding()])
+    store.add_chunks(
+        [chunk],
+        [make_embedding()],
+    )
 
     rows = fake_client.tables["document_chunks"]
 
@@ -210,7 +223,10 @@ def test_add_chunks_accepts_dictionary_input(store, fake_client):
         "metadata": {"source": "manual"},
     }
 
-    store.add_chunks([chunk], [make_embedding()])
+    store.add_chunks(
+        [chunk],
+        [make_embedding()],
+    )
 
     rows = fake_client.tables["document_chunks"]
 
@@ -221,7 +237,10 @@ def test_add_chunks_accepts_dictionary_input(store, fake_client):
 
 @pytest.mark.integration
 def test_add_chunks_rejects_mismatched_counts(store):
-    with pytest.raises(ValueError, match="exactly one embedding"):
+    with pytest.raises(
+        ValueError,
+        match="exactly one embedding",
+    ):
         store.add_chunks(
             [make_chunk()],
             [],
@@ -230,7 +249,10 @@ def test_add_chunks_rejects_mismatched_counts(store):
 
 @pytest.mark.integration
 def test_add_chunks_rejects_invalid_embedding_dimension(store):
-    with pytest.raises(ValueError, match="768-dimensional"):
+    with pytest.raises(
+        ValueError,
+        match="768-dimensional",
+    ):
         store.add_chunks(
             [make_chunk()],
             [make_embedding(512)],
@@ -241,7 +263,10 @@ def test_add_chunks_rejects_invalid_embedding_dimension(store):
 def test_add_chunks_rejects_missing_document_id(store):
     chunk = make_chunk(document_id=None)
 
-    with pytest.raises(ValueError, match="document_id"):
+    with pytest.raises(
+        ValueError,
+        match="document_id",
+    ):
         store.add_chunks(
             [chunk],
             [make_embedding()],
@@ -257,7 +282,10 @@ def test_add_chunks_rejects_missing_content(store):
         "metadata": {},
     }
 
-    with pytest.raises(ValueError, match="content and chunk_index"):
+    with pytest.raises(
+        ValueError,
+        match="content and chunk_index",
+    ):
         store.add_chunks(
             [chunk],
             [make_embedding()],
@@ -297,7 +325,8 @@ def test_add_chunks_splits_large_batches(store, fake_client):
 
 @pytest.mark.integration
 def test_similarity_search_returns_formatted_results(
-    store, fake_client
+    store,
+    fake_client,
 ):
     fake_client.rpc_data = [
         {
@@ -329,7 +358,8 @@ def test_similarity_search_returns_formatted_results(
 
 @pytest.mark.integration
 def test_similarity_search_applies_metadata_filters(
-    store, fake_client
+    store,
+    fake_client,
 ):
     fake_client.rpc_data = [
         {
@@ -364,8 +394,14 @@ def test_similarity_search_applies_metadata_filters(
 
 @pytest.mark.integration
 @pytest.mark.parametrize("top_k", [0, -1, 21])
-def test_similarity_search_rejects_invalid_top_k(store, top_k):
-    with pytest.raises(ValueError, match="top_k"):
+def test_similarity_search_rejects_invalid_top_k(
+    store,
+    top_k,
+):
+    with pytest.raises(
+        ValueError,
+        match="top_k",
+    ):
         store.similarity_search(
             make_embedding(),
             top_k=top_k,
@@ -374,7 +410,10 @@ def test_similarity_search_rejects_invalid_top_k(store, top_k):
 
 @pytest.mark.integration
 def test_similarity_search_rejects_invalid_embedding(store):
-    with pytest.raises(ValueError, match="768-dimensional"):
+    with pytest.raises(
+        ValueError,
+        match="768-dimensional",
+    ):
         store.similarity_search(
             make_embedding(384),
         )
@@ -382,7 +421,8 @@ def test_similarity_search_rejects_invalid_embedding(store):
 
 @pytest.mark.integration
 def test_similarity_search_handles_empty_results(
-    store, fake_client
+    store,
+    fake_client,
 ):
     fake_client.rpc_data = []
 
@@ -395,11 +435,15 @@ def test_similarity_search_handles_empty_results(
 
 @pytest.mark.integration
 def test_similarity_search_propagates_rpc_errors(
-    store, fake_client
+    store,
+    fake_client,
 ):
     fake_client.rpc_error = RuntimeError("RPC unavailable")
 
-    with pytest.raises(RuntimeError, match="RPC unavailable"):
+    with pytest.raises(
+        RuntimeError,
+        match="RPC unavailable",
+    ):
         store.similarity_search(make_embedding())
 
 
@@ -428,7 +472,8 @@ def test_delete_by_document_id(store, fake_client):
 
 @pytest.mark.integration
 def test_get_stats_returns_document_and_chunk_counts(
-    store, fake_client
+    store,
+    fake_client,
 ):
     fake_client.tables["document_chunks"] = [
         {"id": "chunk-1"},
@@ -452,8 +497,19 @@ def test_get_stats_returns_document_and_chunk_counts(
 
 @pytest.mark.integration
 def test_get_collection_stats_is_compatibility_alias(
-    store, fake_client
+    store,
 ):
-    stats = store.get_collection_stats()
+    with patch.object(
+        store,
+        "get_stats",
+        return_value={
+            "table": "document_chunks",
+            "total_chunks": 3,
+            "total_documents": 2,
+        },
+    ) as mock_stats:
+        result = store.get_collection_stats()
 
-    assert stats == store.get_stats()
+    mock_stats.assert_called_once()
+    assert result["total_chunks"] == 3
+    assert result["total_documents"] == 2
