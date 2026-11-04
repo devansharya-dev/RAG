@@ -101,7 +101,6 @@ class SupabaseVectorStore(BaseVectorStore):
                 }
             )
 
-        # Keep batches reasonably small for API requests.
         batch_size = 100
 
         for start in range(0, len(rows), batch_size):
@@ -114,7 +113,7 @@ class SupabaseVectorStore(BaseVectorStore):
         top_k: int = 4,
         filters: dict[str, Any] | None = None,
     ) -> list[Any]:
-        """Search chunks using the existing match_document_chunks RPC."""
+        """Search chunks with database-level metadata filtering."""
         if not 1 <= top_k <= 20:
             raise ValueError("top_k must be between 1 and 20.")
 
@@ -125,15 +124,30 @@ class SupabaseVectorStore(BaseVectorStore):
                 f"Expected a 768-dimensional query embedding, got {len(vector)}."
             )
 
-        # The SQL function accepts query_embedding, match_count and
-        # match_threshold, as defined in the existing database schema.
-        result = self.client.rpc(
-            "match_document_chunks",
-            {
+        if filters is not None and not isinstance(filters, dict):
+            raise ValueError("filters must be a dictionary.")
+
+        if filters:
+            rpc_name = "match_document_chunks_filtered"
+
+            rpc_params = {
                 "query_embedding": vector,
-                "match_count": 20 if filters else top_k,
+                "match_count": 20,
                 "match_threshold": 0.0,
-            },
+                "metadata_filter": filters,
+            }
+        else:
+            rpc_name = "match_document_chunks"
+
+            rpc_params = {
+                "query_embedding": vector,
+                "match_count": top_k,
+                "match_threshold": 0.0,
+            }
+
+        result = self.client.rpc(
+            rpc_name,
+            rpc_params,
         ).execute()
 
         matches = result.data or []
@@ -142,7 +156,8 @@ class SupabaseVectorStore(BaseVectorStore):
         for match in matches:
             metadata = match.get("metadata") or {}
 
-            # Optional exact-match metadata filters.
+            # Defensive verification. The primary metadata filtering
+            # happens in PostgreSQL before its LIMIT is applied.
             if filters and any(
                 metadata.get(key) != value
                 for key, value in filters.items()
