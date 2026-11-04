@@ -10,21 +10,24 @@ import ollama
 from app.core.config import get_settings
 from app.ingestion.chunker import Chunker
 from app.ingestion.loaders import DOCXLoader, PDFLoader, TextLoader
+from app.ingestion.text_cleaner import TextCleaner
 from app.schemas.document import DocumentChunk, IngestionReport
 from app.vectorstore.supabase_store import SupabaseVectorStore
 
 
 class IngestionPipeline:
-    """Load, chunk, embed, and persist documents."""
+    """Load, clean, chunk, embed, and persist documents."""
 
     def __init__(
         self,
         vector_store: SupabaseVectorStore | None = None,
         chunker: Chunker | None = None,
+        text_cleaner: TextCleaner | None = None,
     ) -> None:
         self.settings = get_settings()
         self.vector_store = vector_store or SupabaseVectorStore()
         self.chunker = chunker or Chunker()
+        self.text_cleaner = text_cleaner or TextCleaner()
 
         self.loaders = {
             ".txt": TextLoader(),
@@ -47,18 +50,36 @@ class IngestionPipeline:
             raise ValueError(f"Unsupported file type: {path.suffix}")
 
         loaded_documents = loader.load(path)
+
         if not loaded_documents:
             raise ValueError("The loader returned no documents.")
 
-        # Combine extracted text to generate a stable file-level hash.
+        # Clean extracted text while preserving loader metadata.
+        for loaded_doc in loaded_documents:
+            loaded_doc.content = self.text_cleaner.clean(
+                loaded_doc.content
+            )
+
+        # Remove empty pages/documents after cleaning.
+        loaded_documents = [
+            doc for doc in loaded_documents if doc.content.strip()
+        ]
+
+        if not loaded_documents:
+            raise ValueError(
+                "The document contains no usable text after cleaning."
+            )
+
+        # Hash the cleaned content for consistent duplicate detection.
         content_hash = hashlib.sha256(
-            "\n".join(doc.content for doc in loaded_documents).encode("utf-8")
+            "\n".join(
+                doc.content for doc in loaded_documents
+            ).encode("utf-8")
         ).hexdigest()
 
         store = self.vector_store
         client = store.client
 
-        # Skip an already completed document with identical content.
         existing = (
             client.table("documents")
             .select("id,status")
@@ -67,6 +88,7 @@ class IngestionPipeline:
             .execute()
         ).data
 
+        # Skip an already completed document with identical content.
         if existing and existing[0]["status"] == "completed":
             return IngestionReport(
                 document_id=str(existing[0]["id"]),
@@ -82,7 +104,7 @@ class IngestionPipeline:
             if existing:
                 document_id = str(existing[0]["id"])
 
-                # Clear any previous partial ingestion before retrying.
+                # Clear previous partial ingestion before retrying.
                 client.table("document_chunks").delete().eq(
                     "document_id", document_id
                 ).execute()
@@ -90,6 +112,7 @@ class IngestionPipeline:
                 client.table("documents").update(
                     {"status": "processing"}
                 ).eq("id", document_id).execute()
+
             else:
                 created = (
                     client.table("documents")
@@ -104,15 +127,18 @@ class IngestionPipeline:
                 )
 
                 if not created.data:
-                    raise RuntimeError("Supabase did not return the document ID.")
+                    raise RuntimeError(
+                        "Supabase did not return the document ID."
+                    )
 
                 document_id = str(created.data[0]["id"])
 
             chunks: list[DocumentChunk] = []
 
             for loaded_doc in loaded_documents:
-                metadata: dict[str, Any] = dict(loaded_doc.metadata)
-                page_number = metadata.get("page_number")
+                metadata: dict[str, Any] = dict(
+                    loaded_doc.metadata
+                )
 
                 page_chunks = self.chunker.chunk_text(
                     loaded_doc.content,
@@ -129,10 +155,12 @@ class IngestionPipeline:
 
             # Generate embeddings locally through Ollama.
             texts = [chunk.content for chunk in chunks]
+
             embedding_response = ollama.embed(
                 model=self.settings.OLLAMA_EMBED_MODEL,
                 input=texts,
             )
+
             embeddings = embedding_response.embeddings
 
             if len(embeddings) != len(chunks):

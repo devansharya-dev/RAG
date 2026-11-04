@@ -60,23 +60,49 @@ class Chunker:
 
         return parts
 
-    def _make_segments(self, text: str) -> list[str]:
-        """Prefer paragraph and sentence boundaries."""
+    def _make_segments(self, text: str) -> list[tuple[str, str]]:
+        """
+        Create text segments with their preceding separators.
+
+        Paragraph boundaries use double newlines.
+        Sentence boundaries use normal spaces.
+        """
         paragraphs = re.split(r"\n\s*\n+", text.strip())
-        segments: list[str] = []
+
+        segments: list[tuple[str, str]] = []
+        first_paragraph = True
 
         for paragraph in paragraphs:
-            paragraph = re.sub(r"\s+", " ", paragraph).strip()
+            paragraph = re.sub(r"[ \t]+", " ", paragraph).strip()
 
             if not paragraph:
                 continue
 
+            paragraph_separator = (
+                "" if first_paragraph else "\n\n"
+            )
+
+            first_paragraph = False
+
             if len(paragraph) <= self.chunk_size:
-                segments.append(paragraph)
+                segments.append((paragraph, paragraph_separator))
                 continue
 
             sentences = re.split(r"(?<=[.!?])\s+", paragraph)
+            first_segment_in_paragraph = True
             current = ""
+
+            def add_segment(value: str) -> None:
+                nonlocal first_segment_in_paragraph
+
+                separator = (
+                    paragraph_separator
+                    if first_segment_in_paragraph
+                    else " "
+                )
+
+                segments.append((value, separator))
+                first_segment_in_paragraph = False
 
             for sentence in sentences:
                 sentence = sentence.strip()
@@ -86,12 +112,14 @@ class Chunker:
 
                 if len(sentence) > self.chunk_size:
                     if current:
-                        segments.append(current)
+                        add_segment(current)
                         current = ""
 
-                    segments.extend(
-                        self._split_long_text(sentence, self.chunk_size)
-                    )
+                    for part in self._split_long_text(
+                        sentence, self.chunk_size
+                    ):
+                        add_segment(part)
+
                     continue
 
                 candidate = f"{current} {sentence}".strip()
@@ -100,12 +128,12 @@ class Chunker:
                     current = candidate
                 else:
                     if current:
-                        segments.append(current)
+                        add_segment(current)
 
                     current = sentence
 
             if current:
-                segments.append(current)
+                add_segment(current)
 
         return segments
 
@@ -136,8 +164,9 @@ class Chunker:
                     )
                 )
 
-        for segment in segments:
-            candidate = f"{current} {segment}".strip()
+        for segment, separator in segments:
+            actual_separator = separator if current else ""
+            candidate = f"{current}{actual_separator}{segment}"
 
             if len(candidate) <= self.chunk_size:
                 current = candidate
@@ -146,11 +175,10 @@ class Chunker:
             if current:
                 save_chunk(current)
 
-            # Keep the complete incoming segment.
-            # Overlap is limited to the remaining available space.
+            # Preserve overlap without exceeding the chunk size.
             available_overlap = max(
                 0,
-                self.chunk_size - len(segment) - 1,
+                self.chunk_size - len(segment) - len(separator),
             )
 
             overlap_length = min(
@@ -165,7 +193,13 @@ class Chunker:
                 else ""
             )
 
-            current = f"{overlap} {segment}".strip()
+            # Keep the paragraph separator between previous context
+            # and a segment belonging to a new paragraph.
+            current = (
+                f"{overlap}{separator}{segment}"
+                if overlap
+                else segment
+            )
 
         if current:
             save_chunk(current)
