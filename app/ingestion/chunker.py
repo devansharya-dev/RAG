@@ -10,7 +10,7 @@ from app.schemas.document import DocumentChunk
 
 
 class Chunker:
-    """Split text into overlapping chunks while preserving source metadata."""
+    """Split text into overlapping chunks without losing source content."""
 
     def __init__(
         self,
@@ -39,7 +39,7 @@ class Chunker:
 
     @staticmethod
     def _split_long_text(text: str, max_size: int) -> list[str]:
-        """Split long text using whitespace when possible."""
+        """Split text at whitespace boundaries without dropping words."""
         parts: list[str] = []
 
         while len(text) > max_size:
@@ -48,7 +48,11 @@ class Chunker:
             if split_at <= 0:
                 split_at = max_size
 
-            parts.append(text[:split_at].strip())
+            part = text[:split_at].strip()
+
+            if part:
+                parts.append(part)
+
             text = text[split_at:].strip()
 
         if text:
@@ -76,6 +80,7 @@ class Chunker:
 
             for sentence in sentences:
                 sentence = sentence.strip()
+
                 if not sentence:
                     continue
 
@@ -96,6 +101,7 @@ class Chunker:
                 else:
                     if current:
                         segments.append(current)
+
                     current = sentence
 
             if current:
@@ -120,6 +126,7 @@ class Chunker:
 
         def save_chunk(content: str) -> None:
             content = content.strip()
+
             if content:
                 chunks.append(
                     DocumentChunk(
@@ -139,11 +146,26 @@ class Chunker:
             if current:
                 save_chunk(current)
 
-            overlap = current[-self.chunk_overlap:] if self.chunk_overlap else ""
-            current = f"{overlap} {segment}".strip()
+            # Keep the complete incoming segment.
+            # Overlap is limited to the remaining available space.
+            available_overlap = max(
+                0,
+                self.chunk_size - len(segment) - 1,
+            )
 
-            if len(current) > self.chunk_size:
-                current = current[:self.chunk_size].strip()
+            overlap_length = min(
+                self.chunk_overlap,
+                available_overlap,
+                len(current),
+            )
+
+            overlap = (
+                current[-overlap_length:]
+                if overlap_length > 0
+                else ""
+            )
+
+            current = f"{overlap} {segment}".strip()
 
         if current:
             save_chunk(current)
