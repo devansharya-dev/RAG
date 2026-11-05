@@ -4,10 +4,10 @@
     "metrics": {
         "recall_at_k": 1.0,
         "mean_reciprocal_rank": 0.7416666666666667,
-        "answer_accuracy": 0.95,
+        "answer_accuracy": 1.0,
         "abstention_accuracy": 1.0,
-        "grounded_answer_rate": 0.76,
-        "average_latency_seconds": 3.2745926399959715
+        "grounded_answer_rate": 0.8,
+        "average_latency_seconds": 2.8573060360050295
     },
     "retrieval_metrics_at_k": {
         "1": {
@@ -28,10 +28,10 @@
     },
     "counts": {
         "answerable_questions": 20,
-        "correct_answers": 19,
+        "correct_answers": 20,
         "unanswerable_questions": 5,
         "correct_abstentions": 5,
-        "grounded_answers": 19
+        "grounded_answers": 20
     },
     "results": [
         {
@@ -53,7 +53,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 15.783,
+            "latency_seconds": 3.0914,
             "status": "CORRECT"
         },
         {
@@ -75,7 +75,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.2625,
+            "latency_seconds": 3.1687,
             "status": "CORRECT"
         },
         {
@@ -97,7 +97,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 4.4142,
+            "latency_seconds": 2.9433,
             "status": "CORRECT"
         },
         {
@@ -105,7 +105,7 @@
             "question": "How many microservices does Project Orion contain?",
             "answerable": true,
             "expected_answer": "12",
-            "generated_answer": "Project Orion contains 12 microservices. [1]",
+            "generated_answer": "Project Orion contains 12 microservices. [1] [3]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -119,7 +119,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 3.0811,
+            "latency_seconds": 2.8661,
             "status": "CORRECT"
         },
         {
@@ -127,9 +127,9 @@
             "question": "Which backend framework does Project Orion use?",
             "answerable": true,
             "expected_answer": "FastAPI",
-            "generated_answer": "The provided documents do not contain enough information to answer this.",
-            "grounded": false,
-            "answer_correct": false,
+            "generated_answer": "FastAPI [1] [3]",
+            "grounded": true,
+            "answer_correct": true,
             "retrieved_filenames": [
                 "project_orion_infrastructure.txt",
                 "rag_test.docx",
@@ -141,15 +141,15 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 2.8684,
-            "status": "INCORRECT"
+            "latency_seconds": 3.0564,
+            "status": "CORRECT"
         },
         {
             "id": "Q006",
             "question": "Which technology provides caching in Project Orion?",
             "answerable": true,
             "expected_answer": "Redis",
-            "generated_answer": "Redis. [1] [2]",
+            "generated_answer": "Redis. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -163,7 +163,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 2.766,
+            "latency_seconds": 2.4519,
             "status": "CORRECT"
         },
         {
@@ -185,7 +185,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6616,
+            "latency_seconds": 2.607,
             "status": "CORRECT"
         },
         {
@@ -207,7 +207,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.781,
+            "latency_seconds": 3.2289,
             "status": "CORRECT"
         },
         {
@@ -229,7 +229,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.1445,
+            "latency_seconds": 2.8007,
             "status": "CORRECT"
         },
         {
@@ -251,7 +251,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6955,
+            "latency_seconds": 2.5331,
             "status": "CORRECT"
         },
         {
@@ -273,7 +273,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.7074,
+            "latency_seconds": 2.4532,
             "status": "CORRECT"
         },
         {
@@ -295,7 +295,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6672,
+            "latency_seconds": 2.8832,
             "status": "CORRECT"
         },
         {
@@ -303,7 +303,7 @@
             "question": "Which search engine indexes Project Vortex security events?",
             "answerable": true,
             "expected_answer": "Elasticsearch",
-            "generated_answer": "Elasticsearch. [2]",
+            "generated_answer": "Elasticsearch. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -317,7 +317,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.7536,
+            "latency_seconds": 2.5325,
             "status": "CORRECT"
         },
         {
@@ -325,7 +325,7 @@
             "question": "Which programming language is used for Project Meridian's transaction service?",
             "answerable": true,
             "expected_answer": "Java",
-            "generated_answer": "Java [1]",
+            "generated_answer": "Java. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -339,7 +339,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.662,
+            "latency_seconds": 2.6899,
             "status": "CORRECT"
         },
         {
@@ -361,7 +361,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.6825,
+            "latency_seconds": 2.4726,
             "status": "CORRECT"
         },
         {
@@ -383,7 +383,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.657,
+            "latency_seconds": 2.915,
             "status": "CORRECT"
         },
         {
@@ -405,7 +405,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.9429,
+            "latency_seconds": 2.6032,
             "status": "CORRECT"
         },
         {
@@ -413,7 +413,7 @@
             "question": "Which recommendation algorithm approach does Project Horizon use?",
             "answerable": true,
             "expected_answer": "Collaborative filtering",
-            "generated_answer": "Collaborative filtering is used by Project Horizon's ranking pipeline. [1]",
+            "generated_answer": "Collaborative filtering. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -427,7 +427,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.7666,
+            "latency_seconds": 2.6426,
             "status": "CORRECT"
         },
         {
@@ -449,7 +449,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.6005,
+            "latency_seconds": 3.581,
             "status": "CORRECT"
         },
         {
@@ -471,7 +471,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.0213,
+            "latency_seconds": 3.4771,
             "status": "CORRECT"
         },
         {
@@ -491,7 +491,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.7816,
+            "latency_seconds": 3.0872,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -511,7 +511,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 3.6568,
+            "latency_seconds": 3.88,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -531,7 +531,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.8402,
+            "latency_seconds": 2.1288,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -551,7 +551,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.8751,
+            "latency_seconds": 1.9141,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -571,7 +571,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.7925,
+            "latency_seconds": 3.4244,
             "status": "CORRECT_ABSTENTION"
         }
     ]

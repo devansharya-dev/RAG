@@ -429,3 +429,34 @@ def test_generator_errors_are_propagated(sample_contexts):
     ):
         service.answer(ChatRequest(question="Test generation error."))
 
+
+@pytest.mark.integration
+def test_verifier_receives_only_cited_contexts(sample_contexts):
+    retriever = FakeRetriever(contexts=sample_contexts)
+
+    generator = FakeAnswerGenerator(
+        result={
+            "answer": "PostgreSQL [2]",
+            "sources": [{"passage_number": 2}],
+            "grounded": True,
+        }
+    )
+
+    verifier = FakeGroundingVerifier()
+
+    service = RAGService(
+        retriever=retriever,
+        answer_generator=generator,
+        grounding_verifier=verifier,
+    )
+
+    response = service.answer(
+        ChatRequest(question="Which database does Project Nebula use?")
+    )
+
+    assert response.grounded is True
+    assert len(response.sources) == 1
+    assert response.sources[0].document_id == "doc-2"
+
+    assert len(verifier.calls) == 1
+    assert verifier.calls[0]["contexts"] == [sample_contexts[1]]

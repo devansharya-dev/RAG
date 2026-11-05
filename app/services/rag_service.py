@@ -1,4 +1,4 @@
-﻿from app.generation.answer_generator import (
+from app.generation.answer_generator import (
     AnswerGenerator,
     INSUFFICIENT_ANSWER,
 )
@@ -49,6 +49,7 @@ class RAGService:
         )
 
         sources: list[SourceReference] = []
+        verification_contexts = []
 
         for source in result.get("sources", []):
             passage_number = source.get("passage_number")
@@ -64,6 +65,8 @@ class RAGService:
 
             context = contexts[passage_number - 1]
             metadata = context.get("metadata") or {}
+
+            verification_contexts.append(context)
 
             sources.append(
                 SourceReference(
@@ -95,7 +98,7 @@ class RAGService:
         verification = self.grounding_verifier.verify(
             question=question,
             answer=result["answer"],
-            contexts=contexts,
+            contexts=verification_contexts,
         )
 
         if (
