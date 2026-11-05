@@ -1,0 +1,9 @@
+PROJECT ORION — SERVICE PROFILE
+
+Project Orion is an inventory management platform for retail businesses.
+Its backend is divided into 12 independent microservices. The backend
+framework used by the project is FastAPI. Redis provides caching for
+frequently requested inventory information. PostgreSQL stores product
+and order records, while Elasticsearch supports product search.
+The application is deployed using Docker containers and Kubernetes.
+The project team follows a weekly release cycle.

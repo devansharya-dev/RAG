@@ -1,0 +1,8 @@
+PROJECT VORTEX — CYBERSECURITY
+
+Project Vortex is a security monitoring platform.
+It collects authentication and network events from enterprise systems.
+The event search engine is Elasticsearch.
+Log processing pipelines are written in Python.
+The platform sends critical alerts through email and Slack.
+Its detection rules are maintained by the security engineering team.

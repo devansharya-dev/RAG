@@ -1,0 +1,194 @@
+{
+    "dataset_size": 8,
+    "top_k": 4,
+    "metrics": {
+        "recall_at_k": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "answer_accuracy": 1.0,
+        "abstention_accuracy": 1.0,
+        "grounded_answer_rate": 0.75,
+        "average_latency_seconds": 4.077436437502911
+    },
+    "retrieval_metrics_at_k": {
+        "1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "hit_rate": 1.0
+        },
+        "2": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "hit_rate": 1.0
+        },
+        "4": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "hit_rate": 1.0
+        }
+    },
+    "counts": {
+        "answerable_questions": 6,
+        "correct_answers": 6,
+        "unanswerable_questions": 2,
+        "correct_abstentions": 2,
+        "grounded_answers": 6
+    },
+    "results": [
+        {
+            "id": "Q001",
+            "question": "How many processing nodes does Project Nebula use?",
+            "answerable": true,
+            "expected_answer": "48",
+            "generated_answer": "48 [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.pdf",
+                "rag_test.docx"
+            ],
+            "relevant_filenames": [
+                "rag_test.pdf"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 13.14,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q002",
+            "question": "What is the primary database of Project Nebula?",
+            "answerable": true,
+            "expected_answer": "PostgreSQL",
+            "generated_answer": "PostgreSQL. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.pdf",
+                "rag_test.docx"
+            ],
+            "relevant_filenames": [
+                "rag_test.pdf"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 4.2019,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q003",
+            "question": "When was Project Nebula launched?",
+            "answerable": true,
+            "expected_answer": "March 2026",
+            "generated_answer": "March 2026. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.pdf",
+                "rag_test.docx"
+            ],
+            "relevant_filenames": [
+                "rag_test.pdf"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.6908,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q004",
+            "question": "How many microservices does Project Orion have?",
+            "answerable": true,
+            "expected_answer": "12 microservices",
+            "generated_answer": "Project Orion has 12 microservices. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.docx",
+                "rag_test.pdf"
+            ],
+            "relevant_filenames": [
+                "rag_test.docx"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.7052,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q005",
+            "question": "Which backend framework does Project Orion use?",
+            "answerable": true,
+            "expected_answer": "FastAPI",
+            "generated_answer": "FastAPI [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.docx",
+                "rag_test.pdf"
+            ],
+            "relevant_filenames": [
+                "rag_test.docx"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.3772,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q006",
+            "question": "Which technology does Project Orion use for caching?",
+            "answerable": true,
+            "expected_answer": "Redis",
+            "generated_answer": "Redis. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.docx",
+                "rag_test.pdf"
+            ],
+            "relevant_filenames": [
+                "rag_test.docx"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 3.0266,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q007",
+            "question": "Which cloud provider hosts Project Nebula?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.pdf",
+                "rag_test.docx"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 1.6488,
+            "status": "CORRECT_ABSTENTION"
+        },
+        {
+            "id": "Q008",
+            "question": "Who is the CEO of Project Orion?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.docx",
+                "rag_test.pdf"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 2.8291,
+            "status": "CORRECT_ABSTENTION"
+        }
+    ]
+}

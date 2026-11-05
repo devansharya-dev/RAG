@@ -1,0 +1,8 @@
+PROJECT DELTA — CONTINUOUS INTEGRATION
+
+Project Delta executes automated builds for software repositories.
+Jenkins coordinates the continuous integration pipeline.
+Docker containers provide isolated build environments.
+Go powers the repository service.
+PostgreSQL stores project and build metadata.
+Failed builds generate notifications for repository owners.

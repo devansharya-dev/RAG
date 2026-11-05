@@ -1,0 +1,8 @@
+PROJECT SUMMIT — HEALTHCARE SCHEDULING
+
+Project Summit is a healthcare appointment scheduling application.
+Its backend is built with Node.js and Express.
+The primary database is PostgreSQL.
+The application uses Redis to cache doctor availability.
+Patients can search for available appointment slots.
+The notification service sends appointment reminders by email.

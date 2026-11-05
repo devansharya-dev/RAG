@@ -3,6 +3,8 @@ import pytest
 
 from app.retrieval.metrics import (
     recall_at_k,
+    precision_at_k,
+    hit_rate_at_k,
     reciprocal_rank,
     mean_reciprocal_rank,
 )
@@ -31,6 +33,48 @@ def test_recall_at_k_with_empty_retrieval():
 def test_recall_at_k_rejects_invalid_k():
     with pytest.raises(ValueError):
         recall_at_k(["A"], {"A"}, 0)
+
+
+@pytest.mark.evaluation
+def test_precision_at_k():
+    retrieved = ["A", "B", "C", "D"]
+    relevant = {"A", "C"}
+
+    assert precision_at_k(retrieved, relevant, 2) == 0.5
+    assert precision_at_k(retrieved, relevant, 3) == pytest.approx(2 / 3)
+
+
+@pytest.mark.evaluation
+def test_precision_at_k_when_fewer_results_are_returned():
+    assert precision_at_k(["A", "B"], {"A"}, 4) == 0.25
+
+
+@pytest.mark.evaluation
+def test_precision_at_k_with_no_relevant_results():
+    assert precision_at_k(["A", "B"], set(), 2) == 0.0
+
+
+@pytest.mark.evaluation
+def test_precision_at_k_rejects_invalid_k():
+    with pytest.raises(ValueError):
+        precision_at_k(["A"], {"A"}, 0)
+
+
+@pytest.mark.evaluation
+def test_hit_rate_at_k():
+    assert hit_rate_at_k(["A", "B", "C"], {"C"}, 2) == 0.0
+    assert hit_rate_at_k(["A", "B", "C"], {"C"}, 3) == 1.0
+
+
+@pytest.mark.evaluation
+def test_hit_rate_at_k_with_no_relevant_results():
+    assert hit_rate_at_k(["A", "B"], set(), 2) == 0.0
+
+
+@pytest.mark.evaluation
+def test_hit_rate_at_k_rejects_invalid_k():
+    with pytest.raises(ValueError):
+        hit_rate_at_k(["A"], {"A"}, 0)
 
 
 @pytest.mark.evaluation
@@ -73,4 +117,3 @@ def test_mrr_rejects_mismatched_query_counts():
 @pytest.mark.evaluation
 def test_mrr_with_empty_dataset():
     assert mean_reciprocal_rank([], []) == 0.0
-

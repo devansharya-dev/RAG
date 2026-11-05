@@ -1,0 +1,8 @@
+PROJECT TITAN — TRACKING ENGINE
+
+The tracking engine processes location updates from delivery vehicles.
+Apache Kafka transports location events to processing services.
+Cassandra stores high-volume tracking records.
+Kotlin services calculate shipment progress.
+The Flutter application displays shipment locations and status.
+Historical tracking records are used for delivery analysis.

@@ -1,0 +1,8 @@
+PROJECT PHOENIX — CUSTOMER SUPPORT
+
+Project Phoenix is a customer support automation platform.
+Its natural language processing service is built using Python.
+The application uses MongoDB to store conversation histories.
+The team selected RabbitMQ for asynchronous task distribution.
+Customer support agents access the system through a Vue.js dashboard.
+The first production release was completed in January 2025.

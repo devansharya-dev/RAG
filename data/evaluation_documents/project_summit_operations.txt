@@ -1,0 +1,8 @@
+PROJECT SUMMIT — OPERATIONS
+
+Project Summit handles appointment booking and cancellation workflows.
+Its Node.js services communicate through internal REST APIs.
+PostgreSQL stores appointment and patient scheduling records.
+Redis caches frequently requested doctor availability.
+The operations team reviews service metrics every day.
+The system uses automated backups for database recovery.

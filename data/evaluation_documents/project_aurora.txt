@@ -1,0 +1,8 @@
+PROJECT AURORA — LEARNING PLATFORM
+
+Project Aurora is an online learning management system.
+Its frontend is developed with Next.js and TypeScript.
+The backend uses Django REST Framework.
+MySQL is the primary database for course and enrollment records.
+The platform uses Celery for asynchronous email notifications.
+Learning videos are stored in cloud object storage.

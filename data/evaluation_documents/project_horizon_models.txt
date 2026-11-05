@@ -1,0 +1,9 @@
+PROJECT HORIZON — MODEL PIPELINE
+
+The Project Horizon ranking pipeline combines user activity
+with article interaction history. Collaborative filtering is
+used to generate candidate recommendations.
+Python handles model training and inference.
+MongoDB stores user interaction events.
+Redis caches the final recommendation results.
+The API is implemented with FastAPI.

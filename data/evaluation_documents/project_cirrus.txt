@@ -1,0 +1,7 @@
+PROJECT CIRRUS — CLOUD STORAGE
+
+Project Cirrus provides managed object storage for internal applications.
+Its metadata service uses PostgreSQL. The storage layer is compatible
+with the S3 API. The project uses Go for its storage gateway.
+Automated backups run every 12 hours. The service is deployed across
+two geographic regions. Its operational dashboard is built with React.

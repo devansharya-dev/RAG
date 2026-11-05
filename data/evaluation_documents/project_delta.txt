@@ -1,0 +1,8 @@
+PROJECT DELTA — DEVELOPER PLATFORM
+
+Project Delta provides tools for software development teams.
+Its source code repository service is written in Go.
+The platform uses PostgreSQL for project metadata.
+Build jobs execute inside isolated Docker containers.
+The continuous integration pipeline is managed by Jenkins.
+Developers can review build logs through a web dashboard.

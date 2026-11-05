@@ -1,0 +1,8 @@
+PROJECT ATLAS — SECURITY PROFILE
+
+Project Atlas protects financial reporting data through role-based
+access control. Administrative actions are recorded in an audit log.
+Data transferred between services is encrypted using TLS.
+The platform's analytical database is ClickHouse. Access credentials
+are stored in a centralized secrets manager. Security reviews are
+conducted before major production releases.

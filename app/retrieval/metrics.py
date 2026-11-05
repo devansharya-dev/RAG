@@ -12,11 +12,7 @@ def recall_at_k(
     relevant_ids: Iterable[T],
     k: int,
 ) -> float:
-    """
-    Calculate Recall@K.
-
-    Recall@K = relevant items retrieved in top K / total relevant items.
-    """
+    """Calculate the fraction of relevant items retrieved in top K."""
     if k < 1:
         raise ValueError("k must be at least 1.")
 
@@ -30,17 +26,53 @@ def recall_at_k(
     return len(retrieved & relevant) / len(relevant)
 
 
+def precision_at_k(
+    retrieved_ids: Sequence[T],
+    relevant_ids: Iterable[T],
+    k: int,
+) -> float:
+    """Calculate relevant retrieved results divided by K."""
+    if k < 1:
+        raise ValueError("k must be at least 1.")
+
+    relevant = set(relevant_ids)
+
+    if not relevant:
+        return 0.0
+
+    retrieved = retrieved_ids[:k]
+
+    relevant_count = sum(
+        1 for item in retrieved if item in relevant
+    )
+
+    return relevant_count / k
+
+
+def hit_rate_at_k(
+    retrieved_ids: Sequence[T],
+    relevant_ids: Iterable[T],
+    k: int,
+) -> float:
+    """Return 1 if at least one relevant result appears in top K."""
+    if k < 1:
+        raise ValueError("k must be at least 1.")
+
+    relevant = set(relevant_ids)
+
+    if not relevant:
+        return 0.0
+
+    return float(any(
+        item in relevant for item in retrieved_ids[:k]
+    ))
+
+
 def reciprocal_rank(
     retrieved_ids: Sequence[T],
     relevant_ids: Iterable[T],
 ) -> float:
-    """
-    Return the reciprocal rank of the first relevant result.
-
-    If the first relevant result is at position 1, score = 1.0.
-    If it is at position 2, score = 0.5.
-    If no relevant result exists, score = 0.0.
-    """
+    """Return the reciprocal rank of the first relevant result."""
     relevant = set(relevant_ids)
 
     if not relevant:

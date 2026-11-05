@@ -1,0 +1,8 @@
+PROJECT ATLAS — DATA PLATFORM
+
+Project Atlas is a data warehouse platform for financial reporting.
+Its main analytical database is ClickHouse. Daily ingestion jobs are
+scheduled through Apache Airflow. The platform processes approximately
+2 terabytes of raw event data each day. Its reporting dashboard is
+built with React. Data validation is performed before warehouse loading.
+The platform uses object storage for historical raw files.

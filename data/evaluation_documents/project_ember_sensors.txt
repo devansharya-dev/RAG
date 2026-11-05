@@ -1,0 +1,8 @@
+PROJECT EMBER — SENSOR DATA
+
+Project Ember collects temperature, pressure, and vibration readings.
+MQTT transports sensor messages to the ingestion service.
+Rust processes incoming device messages.
+TimescaleDB stores historical time-series measurements.
+The dashboard allows operators to inspect equipment health.
+Threshold-based alerts identify abnormal sensor readings.

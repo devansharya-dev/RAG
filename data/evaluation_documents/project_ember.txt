@@ -1,0 +1,8 @@
+PROJECT EMBER — IOT MONITORING
+
+Project Ember monitors industrial equipment using IoT sensors.
+Its device communication protocol is MQTT.
+The ingestion service is written in Rust.
+TimescaleDB stores time-series sensor measurements.
+The dashboard displays temperature, pressure, and vibration.
+Alerts are triggered when configured thresholds are exceeded.

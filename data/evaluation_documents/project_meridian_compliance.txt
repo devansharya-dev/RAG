@@ -1,0 +1,8 @@
+PROJECT MERIDIAN — COMPLIANCE
+
+Project Meridian maintains an audit trail for payment operations.
+Transaction events are distributed using Apache Kafka.
+The reconciliation process compares payment records with settlement data.
+Access to sensitive financial records is restricted.
+The core transaction service is implemented in Java.
+Compliance reports are generated at the end of each month.

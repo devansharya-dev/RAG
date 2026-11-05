@@ -1,0 +1,8 @@
+PROJECT TITAN — LOGISTICS
+
+Project Titan is a logistics tracking platform.
+Its mobile application is built using Flutter.
+The backend services are written in Kotlin.
+The system uses Cassandra for high-volume tracking events.
+Location updates are processed through Apache Kafka.
+The platform provides shipment status and delivery estimates.

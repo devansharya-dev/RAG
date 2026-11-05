@@ -1,0 +1,8 @@
+PROJECT ORION — INFRASTRUCTURE
+
+Project Orion runs its services inside Kubernetes clusters.
+The platform contains 12 microservices, including inventory, orders,
+payments, authentication, and reporting services. Redis is configured
+as the primary caching technology. The team uses RabbitMQ for selected
+background jobs. PostgreSQL is used for persistent relational storage.
+The infrastructure team monitors container health through Grafana.

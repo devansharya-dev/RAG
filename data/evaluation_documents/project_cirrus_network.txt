@@ -1,0 +1,7 @@
+PROJECT CIRRUS — NETWORK DESIGN
+
+Project Cirrus uses private networking between its storage components.
+External API traffic is routed through a reverse proxy.
+The storage gateway is implemented in Go. Metadata records are stored
+in PostgreSQL. Backups are replicated to a second geographic region.
+The service uses TLS for encrypted communication.

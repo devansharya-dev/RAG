@@ -1,0 +1,8 @@
+PROJECT HORIZON — RECOMMENDATION ENGINE
+
+Project Horizon recommends articles to users based on reading history.
+Its recommendation API is developed using Python and FastAPI.
+The system stores user activity in MongoDB.
+The ranking pipeline uses collaborative filtering.
+Redis caches frequently requested recommendation results.
+The product team evaluates recommendation quality every month.

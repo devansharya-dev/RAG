@@ -1,0 +1,217 @@
+[
+  {
+    "id": "Q001",
+    "question": "How many production processing nodes does Project Nebula use?",
+    "expected_answer": "48",
+    "relevant_filenames": [
+      "project_nebula.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q002",
+    "question": "What is the primary relational database of Project Nebula?",
+    "expected_answer": "PostgreSQL",
+    "relevant_filenames": [
+      "project_nebula.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q003",
+    "question": "When was Project Nebula officially launched?",
+    "expected_answer": "March 2026",
+    "relevant_filenames": [
+      "project_nebula.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q004",
+    "question": "How many microservices does Project Orion contain?",
+    "expected_answer": "12",
+    "relevant_filenames": [
+      "project_orion.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q005",
+    "question": "Which backend framework does Project Orion use?",
+    "expected_answer": "FastAPI",
+    "relevant_filenames": [
+      "project_orion.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q006",
+    "question": "Which technology provides caching in Project Orion?",
+    "expected_answer": "Redis",
+    "relevant_filenames": [
+      "project_orion.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q007",
+    "question": "Which database powers Project Atlas analytics?",
+    "expected_answer": "ClickHouse",
+    "relevant_filenames": [
+      "project_atlas.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q008",
+    "question": "Which workflow scheduler does Project Atlas use?",
+    "expected_answer": "Apache Airflow",
+    "relevant_filenames": [
+      "project_atlas.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q009",
+    "question": "Which database stores Project Phoenix conversation histories?",
+    "expected_answer": "MongoDB",
+    "relevant_filenames": [
+      "project_phoenix.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q010",
+    "question": "Which message broker does Project Phoenix use?",
+    "expected_answer": "RabbitMQ",
+    "relevant_filenames": [
+      "project_phoenix.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q011",
+    "question": "Which programming language powers the Project Cirrus storage gateway?",
+    "expected_answer": "Go",
+    "relevant_filenames": [
+      "project_cirrus.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q012",
+    "question": "Which backend framework does Project Aurora use?",
+    "expected_answer": "Django REST Framework",
+    "relevant_filenames": [
+      "project_aurora.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q013",
+    "question": "Which search engine indexes Project Vortex security events?",
+    "expected_answer": "Elasticsearch",
+    "relevant_filenames": [
+      "project_vortex.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q014",
+    "question": "Which programming language is used for Project Meridian's transaction service?",
+    "expected_answer": "Java",
+    "relevant_filenames": [
+      "project_meridian.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q015",
+    "question": "Which database does Project Summit use?",
+    "expected_answer": "PostgreSQL",
+    "relevant_filenames": [
+      "project_summit.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q016",
+    "question": "Which mobile framework is used by Project Titan?",
+    "expected_answer": "Flutter",
+    "relevant_filenames": [
+      "project_titan.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q017",
+    "question": "Which tool manages Project Delta's continuous integration pipeline?",
+    "expected_answer": "Jenkins",
+    "relevant_filenames": [
+      "project_delta.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q018",
+    "question": "Which recommendation algorithm approach does Project Horizon use?",
+    "expected_answer": "Collaborative filtering",
+    "relevant_filenames": [
+      "project_horizon.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q019",
+    "question": "Which protocol transports Project Ember sensor messages?",
+    "expected_answer": "MQTT",
+    "relevant_filenames": [
+      "project_ember.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q020",
+    "question": "Which database does Project Lumen use?",
+    "expected_answer": "MariaDB",
+    "relevant_filenames": [
+      "project_lumen.txt"
+    ],
+    "answerable": true
+  },
+  {
+    "id": "Q021",
+    "question": "Which cloud provider hosts Project Nebula?",
+    "expected_answer": null,
+    "relevant_filenames": [],
+    "answerable": false
+  },
+  {
+    "id": "Q022",
+    "question": "Who is the CEO of Project Orion?",
+    "expected_answer": null,
+    "relevant_filenames": [],
+    "answerable": false
+  },
+  {
+    "id": "Q023",
+    "question": "What is the annual revenue of Project Atlas?",
+    "expected_answer": null,
+    "relevant_filenames": [],
+    "answerable": false
+  },
+  {
+    "id": "Q024",
+    "question": "How many employees work at Project Phoenix?",
+    "expected_answer": null,
+    "relevant_filenames": [],
+    "answerable": false
+  },
+  {
+    "id": "Q025",
+    "question": "What is the registered office address of Project Titan?",
+    "expected_answer": null,
+    "relevant_filenames": [],
+    "answerable": false
+  }
+]

@@ -1,0 +1,8 @@
+PROJECT LUMEN — CONTENT MANAGEMENT
+
+Project Lumen is a content management system for digital publishers.
+Its backend is developed with PHP and Laravel.
+MariaDB stores articles, user accounts, and publishing metadata.
+The frontend uses Vue.js.
+The platform supports editorial approval workflows.
+Published content is delivered through a CDN.

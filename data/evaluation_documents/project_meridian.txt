@@ -1,0 +1,8 @@
+PROJECT MERIDIAN — PAYMENT SYSTEM
+
+Project Meridian is a digital payment processing system.
+Its core transaction service is written in Java.
+The primary relational database is Oracle Database.
+Apache Kafka distributes transaction events between services.
+The system uses a dedicated reconciliation process every night.
+Payment records are retained according to internal compliance policies.

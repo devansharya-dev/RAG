@@ -1,0 +1,8 @@
+PROJECT VORTEX — DETECTION ENGINE
+
+The Project Vortex detection engine identifies suspicious login patterns.
+It evaluates failed login frequency, unusual locations, and device changes.
+Elasticsearch indexes the collected security events.
+Python workers evaluate detection rules.
+The platform retains searchable security logs for 90 days.
+Critical findings are forwarded to the incident response team.

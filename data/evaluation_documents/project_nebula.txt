@@ -1,0 +1,10 @@
+PROJECT NEBULA — INFRASTRUCTURE PROFILE
+
+Project Nebula is a cloud-based analytics platform designed to process
+large volumes of business events. Its production infrastructure uses
+48 processing nodes distributed across three availability zones.
+PostgreSQL is the primary relational database used for transactional
+records and account information. The platform was officially launched
+in March 2026. Redis is used for temporary session storage, while
+Apache Kafka handles asynchronous event streaming. The engineering
+team uses Python for data processing and FastAPI for internal services.

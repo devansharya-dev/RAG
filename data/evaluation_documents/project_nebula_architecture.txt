@@ -1,0 +1,9 @@
+PROJECT NEBULA — ARCHITECTURE DETAILS
+
+Project Nebula separates ingestion, processing, and reporting workloads.
+Its ingestion layer receives events through HTTP endpoints and Kafka.
+The processing layer runs distributed workers across multiple nodes.
+The production deployment uses 48 processing nodes, but the staging
+environment uses only 8 nodes. PostgreSQL stores transactional data.
+The platform uses Redis for short-lived session information.
+Its monitoring stack includes Prometheus and Grafana.

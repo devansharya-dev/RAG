@@ -1,0 +1,8 @@
+PROJECT PHOENIX — AI MODULE
+
+The AI module of Project Phoenix classifies incoming support requests.
+It uses a transformer-based text classification model.
+The model assigns requests to categories such as billing,
+technical support, and account access. Python is used for model
+inference and preprocessing. Conversation history is stored in
+MongoDB. RabbitMQ distributes background classification tasks.

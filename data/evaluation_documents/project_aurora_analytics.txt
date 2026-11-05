@@ -1,0 +1,8 @@
+PROJECT AURORA — ANALYTICS
+
+Project Aurora tracks course completion and learner engagement.
+Its analytics jobs are executed using Apache Airflow.
+MySQL remains the primary transactional database.
+The analytics dashboard displays enrollment trends,
+completion percentages, and course activity.
+The team exports aggregated reports every Monday.
