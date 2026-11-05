@@ -8,8 +8,6 @@ from app.generation.grounding_verifier import GroundingVerifier
 
 
 class FakeLLMClient:
-    """Return predefined verifier responses."""
-
     def __init__(self, response=None, error=None):
         self.response = response
         self.error = error
@@ -40,6 +38,7 @@ def sample_contexts():
 
 def make_response(
     claim="Project Nebula uses 48 processing nodes.",
+    answer_quote="48",
     verdict="SUPPORTED",
     passage=1,
     quote="Project Nebula uses 48 processing nodes.",
@@ -48,6 +47,7 @@ def make_response(
         "claims": [
             {
                 "claim": claim,
+                "answer_quote": answer_quote,
                 "verdict": verdict,
                 "evidence_passage": passage,
                 "evidence_quote": quote,
@@ -64,6 +64,7 @@ def test_supported_claim_passes_verification(sample_contexts):
     result = verifier.verify(
         "Project Nebula uses 48 processing nodes.",
         sample_contexts,
+        question="How many processing nodes does Project Nebula use?",
     )
 
     assert result["supported"] is True
@@ -77,6 +78,7 @@ def test_unsupported_claim_is_rejected(sample_contexts):
         llm_client=FakeLLMClient(
             make_response(
                 claim="Project Nebula uses 500 processing nodes.",
+                answer_quote="500",
                 verdict="NOT_SUPPORTED",
                 passage=None,
                 quote="",
@@ -98,6 +100,7 @@ def test_contradicted_claim_is_rejected(sample_contexts):
         llm_client=FakeLLMClient(
             make_response(
                 claim="Project Nebula uses 500 processing nodes.",
+                answer_quote="500",
                 verdict="CONTRADICTED",
                 passage=1,
                 quote="Project Nebula uses 48 processing nodes.",
@@ -114,14 +117,13 @@ def test_contradicted_claim_is_rejected(sample_contexts):
     assert result["claims"][0]["verdict"] == "CONTRADICTED"
 
 
-def test_fake_supported_verdict_with_invalid_quote_is_rejected(
+def test_supported_verdict_with_invalid_evidence_quote_is_rejected(
     sample_contexts,
 ):
     verifier = GroundingVerifier(
         llm_client=FakeLLMClient(
             make_response(
-                verdict="SUPPORTED",
-                quote="Project Nebula uses 500 processing nodes.",
+                quote="Project Nebula uses 500 processing nodes."
             )
         )
     )
@@ -141,12 +143,14 @@ def test_one_unsupported_claim_rejects_entire_answer(sample_contexts):
         "claims": [
             {
                 "claim": "Project Nebula uses 48 processing nodes.",
+                "answer_quote": "Project Nebula uses 48 processing nodes",
                 "verdict": "SUPPORTED",
                 "evidence_passage": 1,
                 "evidence_quote": "Project Nebula uses 48 processing nodes.",
             },
             {
-                "claim": "Project Nebula uses 500 processing nodes.",
+                "claim": "Project Nebula uses 500 storage nodes.",
+                "answer_quote": "500 storage nodes",
                 "verdict": "NOT_SUPPORTED",
                 "evidence_passage": None,
                 "evidence_quote": "",
@@ -174,7 +178,10 @@ def test_invalid_passage_reference_fails_closed(sample_contexts):
         )
     )
 
-    result = verifier.verify("Some answer.", sample_contexts)
+    result = verifier.verify(
+        "Project Nebula uses 48 processing nodes.",
+        sample_contexts,
+    )
 
     assert result["supported"] is False
     assert "Verification failed" in result["reason"]
@@ -255,7 +262,8 @@ def test_case_and_whitespace_differences_in_quote_are_allowed(
     verifier = GroundingVerifier(
         llm_client=FakeLLMClient(
             make_response(
-                quote="PROJECT NEBULA   uses 48 processing nodes."
+                answer_quote="48",
+                quote="PROJECT NEBULA   uses 48 processing nodes.",
             )
         )
     )
@@ -266,3 +274,24 @@ def test_case_and_whitespace_differences_in_quote_are_allowed(
     )
 
     assert result["supported"] is True
+
+
+def test_claim_not_present_in_answer_is_rejected(sample_contexts):
+    response = make_response(
+        claim="Project Orion uses FastAPI.",
+        answer_quote="FastAPI",
+        passage=2,
+        quote="Project Orion uses FastAPI.",
+    )
+
+    verifier = GroundingVerifier(
+        llm_client=FakeLLMClient(response)
+    )
+
+    result = verifier.verify(
+        "Project Nebula uses 48 processing nodes.",
+        sample_contexts,
+    )
+
+    assert result["supported"] is False
+    assert "Verification failed" in result["reason"]

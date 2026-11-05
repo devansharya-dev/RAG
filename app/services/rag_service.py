@@ -23,14 +23,13 @@ class RAGService:
         )
 
     def answer(self, request: ChatRequest) -> ChatResponse:
-        """Generate an answer and independently verify its factual claims."""
+        """Generate an answer and independently verify factual claims."""
 
         question = request.question.strip()
 
         if not question:
             raise ValueError("Question cannot be empty.")
 
-        # 1. Retrieve evidence.
         contexts = self.retriever.retrieve(
             query=question,
             top_k=request.top_k,
@@ -44,13 +43,11 @@ class RAGService:
                 grounded=False,
             )
 
-        # 2. Generate an answer using retrieved evidence.
         result = self.answer_generator.generate(
             question=question,
             contexts=contexts,
         )
 
-        # 3. Map valid citation numbers to retrieved chunks.
         sources: list[SourceReference] = []
 
         for source in result.get("sources", []):
@@ -83,7 +80,6 @@ class RAGService:
                 )
             )
 
-        # 4. Do not verify answers that already failed citation validation.
         citations_validated = (
             result.get("grounded") is True and bool(sources)
         )
@@ -96,13 +92,12 @@ class RAGService:
                 grounded=False,
             )
 
-        # 5. Independently verify every factual claim.
         verification = self.grounding_verifier.verify(
+            question=question,
             answer=result["answer"],
             contexts=contexts,
         )
 
-        # 6. Fail closed if verification does not explicitly pass.
         if (
             not isinstance(verification, dict)
             or verification.get("supported") is not True

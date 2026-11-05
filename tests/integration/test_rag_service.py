@@ -59,7 +59,7 @@ class FakeGroundingVerifier:
         }
         self.calls = []
 
-    def verify(self, answer, contexts):
+    def verify(self, answer, contexts, question=""):
         self.calls.append({
             "answer": answer,
             "contexts": contexts,
@@ -428,3 +428,4 @@ def test_generator_errors_are_propagated(sample_contexts):
         match="Generation service unavailable",
     ):
         service.answer(ChatRequest(question="Test generation error."))
+
