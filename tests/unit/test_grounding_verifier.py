@@ -295,3 +295,35 @@ def test_claim_not_present_in_answer_is_rejected(sample_contexts):
 
     assert result["supported"] is False
     assert "Verification failed" in result["reason"]
+
+def test_unrelated_evidence_quote_is_rejected(sample_contexts):
+    contexts = [
+        {
+            "document_id": "doc-003",
+            "chunk_id": "chunk-003",
+            "content": "The project uses Redis for caching.",
+            "metadata": {"filename": "project_orion_infrastructure.txt"},
+        }
+    ]
+
+    response = make_response(
+        claim="Project Orion uses FastAPI.",
+        answer_quote="FastAPI",
+        verdict="SUPPORTED",
+        passage=1,
+        quote="The project uses Redis for caching.",
+    )
+
+    verifier = GroundingVerifier(
+        llm_client=FakeLLMClient(response)
+    )
+
+    result = verifier.verify(
+        "FastAPI",
+        contexts,
+        question="Which backend framework does Project Orion use?",
+    )
+
+    assert result["supported"] is False
+    assert result["claims"][0]["evidence_valid"] is True
+    assert result["claims"][0]["answer_evidence_match"] is False
