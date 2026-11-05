@@ -1,57 +1,65 @@
-from app.generation.answer_generator import AnswerGenerator
+﻿from app.generation.answer_generator import (
+    AnswerGenerator,
+    INSUFFICIENT_ANSWER,
+)
+from app.generation.grounding_verifier import GroundingVerifier
 from app.retrieval.retriever import Retriever
 from app.schemas.chat import ChatRequest, ChatResponse, SourceReference
 
 
 class RAGService:
-    """Coordinate semantic retrieval and document-grounded generation."""
+    """Coordinate retrieval, generation, citation mapping and verification."""
 
     def __init__(
         self,
         retriever: Retriever | None = None,
         answer_generator: AnswerGenerator | None = None,
+        grounding_verifier: GroundingVerifier | None = None,
     ) -> None:
         self.retriever = retriever or Retriever()
         self.answer_generator = answer_generator or AnswerGenerator()
+        self.grounding_verifier = (
+            grounding_verifier or GroundingVerifier()
+        )
 
     def answer(self, request: ChatRequest) -> ChatResponse:
-        """Answer a question using retrieved document evidence."""
+        """Generate an answer and independently verify its factual claims."""
+
         question = request.question.strip()
 
         if not question:
             raise ValueError("Question cannot be empty.")
 
-        # 1. Retrieve evidence from Supabase using Ollama embeddings.
+        # 1. Retrieve evidence.
         contexts = self.retriever.retrieve(
             query=question,
             top_k=request.top_k,
         )
 
-        # 2. Do not invent an answer when the index has no relevant results.
         if not contexts:
             return ChatResponse(
                 question=question,
-                answer=(
-                    "The provided documents do not contain enough "
-                    "information to answer this."
-                ),
+                answer=INSUFFICIENT_ANSWER,
                 sources=[],
                 grounded=False,
             )
 
-        # 3. Generate an answer using the retrieved passages.
+        # 2. Generate an answer using retrieved evidence.
         result = self.answer_generator.generate(
             question=question,
             contexts=contexts,
         )
 
-        # 4. Map generated citation numbers back to retrieved chunks.
+        # 3. Map valid citation numbers to retrieved chunks.
         sources: list[SourceReference] = []
 
         for source in result.get("sources", []):
             passage_number = source.get("passage_number")
 
-            if not isinstance(passage_number, int):
+            if (
+                isinstance(passage_number, bool)
+                or not isinstance(passage_number, int)
+            ):
                 continue
 
             if not 1 <= passage_number <= len(contexts):
@@ -75,9 +83,40 @@ class RAGService:
                 )
             )
 
+        # 4. Do not verify answers that already failed citation validation.
+        citations_validated = (
+            result.get("grounded") is True and bool(sources)
+        )
+
+        if not citations_validated:
+            return ChatResponse(
+                question=question,
+                answer=result.get("answer", INSUFFICIENT_ANSWER),
+                sources=sources,
+                grounded=False,
+            )
+
+        # 5. Independently verify every factual claim.
+        verification = self.grounding_verifier.verify(
+            answer=result["answer"],
+            contexts=contexts,
+        )
+
+        # 6. Fail closed if verification does not explicitly pass.
+        if (
+            not isinstance(verification, dict)
+            or verification.get("supported") is not True
+        ):
+            return ChatResponse(
+                question=question,
+                answer=INSUFFICIENT_ANSWER,
+                sources=[],
+                grounded=False,
+            )
+
         return ChatResponse(
             question=question,
             answer=result["answer"],
             sources=sources,
-            grounded=bool(result.get("grounded", False)) and bool(sources),
+            grounded=True,
         )
