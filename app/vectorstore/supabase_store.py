@@ -54,6 +54,69 @@ class SupabaseVectorStore(BaseVectorStore):
             return item.get(name, default)
         return getattr(item, name, default)
 
+    @staticmethod
+    def _validate_embedding(
+        embedding: Sequence[float],
+    ) -> list[float]:
+        """Validate and normalize a 768-dimensional embedding."""
+        vector = [float(value) for value in embedding]
+
+        if len(vector) != 768:
+            raise ValueError(
+                f"Expected a 768-dimensional embedding, got {len(vector)}."
+            )
+
+        return vector
+
+    @staticmethod
+    def _validate_filters(
+        filters: dict[str, Any] | None,
+    ) -> dict[str, Any]:
+        """Validate metadata filters."""
+        if filters is None:
+            return {}
+
+        if not isinstance(filters, dict):
+            raise ValueError("filters must be a dictionary.")
+
+        return filters
+
+    @staticmethod
+    def _format_results(
+        matches: Sequence[dict[str, Any]],
+        filters: dict[str, Any] | None = None,
+        top_k: int | None = None,
+    ) -> list[dict[str, Any]]:
+        """Format database matches into application results."""
+        output: list[dict[str, Any]] = []
+
+        for match in matches:
+            metadata = match.get("metadata") or {}
+
+            # Defensive metadata verification.
+            if filters and any(
+                metadata.get(key) != value
+                for key, value in filters.items()
+            ):
+                continue
+
+            output.append(
+                {
+                    "chunk_id": match.get("chunk_id"),
+                    "document_id": match.get("document_id"),
+                    "content": match.get("content", ""),
+                    "metadata": metadata,
+                    "similarity": float(
+                        match.get("similarity", 0.0)
+                    ),
+                }
+            )
+
+            if top_k is not None and len(output) >= top_k:
+                break
+
+        return output
+
     def add_chunks(
         self,
         chunks: Sequence[Any],
@@ -61,7 +124,9 @@ class SupabaseVectorStore(BaseVectorStore):
     ) -> None:
         """Insert chunks and their embeddings into document_chunks."""
         if len(chunks) != len(embeddings):
-            raise ValueError("Each chunk must have exactly one embedding.")
+            raise ValueError(
+                "Each chunk must have exactly one embedding."
+            )
 
         if not chunks:
             return
@@ -84,12 +149,7 @@ class SupabaseVectorStore(BaseVectorStore):
                     "Each chunk must have content and chunk_index."
                 )
 
-            vector = [float(value) for value in embedding]
-
-            if len(vector) != 768:
-                raise ValueError(
-                    f"Expected a 768-dimensional embedding, got {len(vector)}."
-                )
+            vector = self._validate_embedding(embedding)
 
             rows.append(
                 {
@@ -104,7 +164,7 @@ class SupabaseVectorStore(BaseVectorStore):
         batch_size = 100
 
         for start in range(0, len(rows), batch_size):
-            batch = rows[start : start + batch_size]
+            batch = rows[start:start + batch_size]
             self.client.table(self.table_name).insert(batch).execute()
 
     def similarity_search(
@@ -112,29 +172,22 @@ class SupabaseVectorStore(BaseVectorStore):
         query_embedding: Sequence[float],
         top_k: int = 4,
         filters: dict[str, Any] | None = None,
-    ) -> list[Any]:
-        """Search chunks with database-level metadata filtering."""
+    ) -> list[dict[str, Any]]:
+        """Search chunks using vector similarity."""
         if not 1 <= top_k <= 20:
             raise ValueError("top_k must be between 1 and 20.")
 
-        vector = [float(value) for value in query_embedding]
+        vector = self._validate_embedding(query_embedding)
+        metadata_filter = self._validate_filters(filters)
 
-        if len(vector) != 768:
-            raise ValueError(
-                f"Expected a 768-dimensional query embedding, got {len(vector)}."
-            )
-
-        if filters is not None and not isinstance(filters, dict):
-            raise ValueError("filters must be a dictionary.")
-
-        if filters:
+        if metadata_filter:
             rpc_name = "match_document_chunks_filtered"
 
             rpc_params = {
                 "query_embedding": vector,
                 "match_count": 20,
                 "match_threshold": 0.0,
-                "metadata_filter": filters,
+                "metadata_filter": metadata_filter,
             }
         else:
             rpc_name = "match_document_chunks"
@@ -150,34 +203,51 @@ class SupabaseVectorStore(BaseVectorStore):
             rpc_params,
         ).execute()
 
-        matches = result.data or []
-        output: list[dict[str, Any]] = []
+        return self._format_results(
+            result.data or [],
+            filters=metadata_filter,
+            top_k=top_k,
+        )
 
-        for match in matches:
-            metadata = match.get("metadata") or {}
+    def hybrid_search(
+        self,
+        query_embedding: Sequence[float],
+        query_text: str,
+        top_k: int = 4,
+        filters: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Search using combined vector and keyword retrieval.
 
-            # Defensive verification. The primary metadata filtering
-            # happens in PostgreSQL before its LIMIT is applied.
-            if filters and any(
-                metadata.get(key) != value
-                for key, value in filters.items()
-            ):
-                continue
+        The database RPC combines both rankings using Reciprocal
+        Rank Fusion (RRF). The returned similarity field represents
+        the RRF score, not cosine similarity.
+        """
+        if not 1 <= top_k <= 20:
+            raise ValueError("top_k must be between 1 and 20.")
 
-            output.append(
-                {
-                    "chunk_id": match.get("chunk_id"),
-                    "document_id": match.get("document_id"),
-                    "content": match.get("content", ""),
-                    "metadata": metadata,
-                    "similarity": float(match.get("similarity", 0.0)),
-                }
-            )
+        if not isinstance(query_text, str) or not query_text.strip():
+            raise ValueError("query_text cannot be empty.")
 
-            if len(output) >= top_k:
-                break
+        vector = self._validate_embedding(query_embedding)
+        metadata_filter = self._validate_filters(filters)
 
-        return output
+        rpc_params = {
+            "p_query_embedding": vector,
+            "p_query_text": query_text.strip(),
+            "p_match_count": top_k,
+            "p_metadata_filter": metadata_filter,
+        }
+
+        result = self.client.rpc(
+            "hybrid_search_document_chunks",
+            rpc_params,
+        ).execute()
+
+        return self._format_results(
+            result.data or [],
+            filters=metadata_filter,
+            top_k=top_k,
+        )
 
     def delete_by_document_id(self, document_id: str) -> None:
         """Delete a document's chunks, then its document record."""
