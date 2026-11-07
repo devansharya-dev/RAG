@@ -1,0 +1,578 @@
+{
+    "dataset_size": 25,
+    "top_k": 4,
+    "metrics": {
+        "recall_at_k": 1.0,
+        "mean_reciprocal_rank": 0.7416666666666667,
+        "answer_accuracy": 1.0,
+        "abstention_accuracy": 1.0,
+        "grounded_answer_rate": 0.8,
+        "average_latency_seconds": 2.9920029039983635
+    },
+    "retrieval_metrics_at_k": {
+        "1": {
+            "precision": 0.55,
+            "recall": 0.55,
+            "hit_rate": 0.55
+        },
+        "2": {
+            "precision": 0.4,
+            "recall": 0.8,
+            "hit_rate": 0.8
+        },
+        "4": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "hit_rate": 1.0
+        }
+    },
+    "counts": {
+        "answerable_questions": 20,
+        "correct_answers": 20,
+        "unanswerable_questions": 5,
+        "correct_abstentions": 5,
+        "grounded_answers": 20
+    },
+    "results": [
+        {
+            "id": "Q001",
+            "question": "How many production processing nodes does Project Nebula use?",
+            "answerable": true,
+            "expected_answer": "48",
+            "generated_answer": "48 [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_nebula_architecture.txt",
+                "rag_test.pdf",
+                "project_nebula.txt",
+                "project_orion_infrastructure.txt"
+            ],
+            "relevant_filenames": [
+                "project_nebula.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.3333333333333333,
+            "latency_seconds": 12.5404,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q002",
+            "question": "What is the primary relational database of Project Nebula?",
+            "answerable": true,
+            "expected_answer": "PostgreSQL",
+            "generated_answer": "PostgreSQL. [1] [2]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_nebula.txt",
+                "rag_test.pdf",
+                "project_nebula_architecture.txt",
+                "project_cirrus_network.txt"
+            ],
+            "relevant_filenames": [
+                "project_nebula.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 3.0981,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q003",
+            "question": "When was Project Nebula officially launched?",
+            "answerable": true,
+            "expected_answer": "March 2026",
+            "generated_answer": "The production infrastructure of Project Nebula was officially launched in March 2026. [2]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "rag_test.pdf",
+                "project_nebula.txt",
+                "project_nebula_architecture.txt",
+                "project_titan.txt"
+            ],
+            "relevant_filenames": [
+                "project_nebula.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 3.1,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q004",
+            "question": "How many microservices does Project Orion contain?",
+            "answerable": true,
+            "expected_answer": "12",
+            "generated_answer": "Project Orion contains 12 microservices. [1] [3]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_orion_infrastructure.txt",
+                "rag_test.docx",
+                "project_orion.txt",
+                "project_nebula_architecture.txt"
+            ],
+            "relevant_filenames": [
+                "project_orion.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.3333333333333333,
+            "latency_seconds": 2.6195,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q005",
+            "question": "Which backend framework does Project Orion use?",
+            "answerable": true,
+            "expected_answer": "FastAPI",
+            "generated_answer": "FastAPI [1] [3]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_orion_infrastructure.txt",
+                "rag_test.docx",
+                "project_orion.txt",
+                "project_nebula.txt"
+            ],
+            "relevant_filenames": [
+                "project_orion.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.3333333333333333,
+            "latency_seconds": 2.5856,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q006",
+            "question": "Which technology provides caching in Project Orion?",
+            "answerable": true,
+            "expected_answer": "Redis",
+            "generated_answer": "Redis. [1] [2]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_orion_infrastructure.txt",
+                "rag_test.docx",
+                "project_orion.txt",
+                "project_cirrus_network.txt"
+            ],
+            "relevant_filenames": [
+                "project_orion.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.3333333333333333,
+            "latency_seconds": 2.2344,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q007",
+            "question": "Which database powers Project Atlas analytics?",
+            "answerable": true,
+            "expected_answer": "ClickHouse",
+            "generated_answer": "ClickHouse. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_atlas.txt",
+                "project_atlas_security.txt",
+                "project_aurora_analytics.txt",
+                "project_nebula.txt"
+            ],
+            "relevant_filenames": [
+                "project_atlas.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.5235,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q008",
+            "question": "Which workflow scheduler does Project Atlas use?",
+            "answerable": true,
+            "expected_answer": "Apache Airflow",
+            "generated_answer": "Apache Airflow. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_atlas.txt",
+                "project_summit.txt",
+                "project_summit_operations.txt",
+                "project_atlas_security.txt"
+            ],
+            "relevant_filenames": [
+                "project_atlas.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.3746,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q009",
+            "question": "Which database stores Project Phoenix conversation histories?",
+            "answerable": true,
+            "expected_answer": "MongoDB",
+            "generated_answer": "MongoDB. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_phoenix.txt",
+                "project_phoenix_ai.txt",
+                "project_nebula.txt",
+                "project_summit_operations.txt"
+            ],
+            "relevant_filenames": [
+                "project_phoenix.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.7476,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q010",
+            "question": "Which message broker does Project Phoenix use?",
+            "answerable": true,
+            "expected_answer": "RabbitMQ",
+            "generated_answer": "RabbitMQ. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_phoenix.txt",
+                "project_phoenix_ai.txt",
+                "project_vortex.txt",
+                "project_atlas.txt"
+            ],
+            "relevant_filenames": [
+                "project_phoenix.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.8089,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q011",
+            "question": "Which programming language powers the Project Cirrus storage gateway?",
+            "answerable": true,
+            "expected_answer": "Go",
+            "generated_answer": "Go. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_cirrus_network.txt",
+                "project_cirrus.txt",
+                "project_orion_infrastructure.txt",
+                "project_delta.txt"
+            ],
+            "relevant_filenames": [
+                "project_cirrus.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 2.5799,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q012",
+            "question": "Which backend framework does Project Aurora use?",
+            "answerable": true,
+            "expected_answer": "Django REST Framework",
+            "generated_answer": "Django REST Framework. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_aurora.txt",
+                "project_aurora_analytics.txt",
+                "rag_test.docx",
+                "project_orion_infrastructure.txt"
+            ],
+            "relevant_filenames": [
+                "project_aurora.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 3.0793,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q013",
+            "question": "Which search engine indexes Project Vortex security events?",
+            "answerable": true,
+            "expected_answer": "Elasticsearch",
+            "generated_answer": "Elasticsearch. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_vortex.txt",
+                "project_vortex_detection.txt",
+                "project_nebula.txt",
+                "project_atlas_security.txt"
+            ],
+            "relevant_filenames": [
+                "project_vortex.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.8214,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q014",
+            "question": "Which programming language is used for Project Meridian's transaction service?",
+            "answerable": true,
+            "expected_answer": "Java",
+            "generated_answer": "Java [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_meridian.txt",
+                "project_meridian_compliance.txt",
+                "project_delta.txt",
+                "project_phoenix.txt"
+            ],
+            "relevant_filenames": [
+                "project_meridian.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 3.4027,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q015",
+            "question": "Which database does Project Summit use?",
+            "answerable": true,
+            "expected_answer": "PostgreSQL",
+            "generated_answer": "PostgreSQL stores appointment and patient scheduling records. [2]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_summit_operations.txt",
+                "project_summit.txt",
+                "project_atlas.txt",
+                "project_nebula.txt"
+            ],
+            "relevant_filenames": [
+                "project_summit.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 3.2248,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q016",
+            "question": "Which mobile framework is used by Project Titan?",
+            "answerable": true,
+            "expected_answer": "Flutter",
+            "generated_answer": "Flutter. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_titan.txt",
+                "project_titan_tracking.txt",
+                "project_delta.txt",
+                "project_atlas.txt"
+            ],
+            "relevant_filenames": [
+                "project_titan.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.3194,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q017",
+            "question": "Which tool manages Project Delta's continuous integration pipeline?",
+            "answerable": true,
+            "expected_answer": "Jenkins",
+            "generated_answer": "Jenkins coordinates the continuous integration pipeline. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_delta_ci.txt",
+                "project_delta.txt",
+                "project_nebula.txt",
+                "project_titan.txt"
+            ],
+            "relevant_filenames": [
+                "project_delta.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 3.2262,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q018",
+            "question": "Which recommendation algorithm approach does Project Horizon use?",
+            "answerable": true,
+            "expected_answer": "Collaborative filtering",
+            "generated_answer": "Collaborative filtering is used to generate candidate recommendations. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_horizon.txt",
+                "project_horizon_models.txt",
+                "project_summit.txt",
+                "project_summit_operations.txt"
+            ],
+            "relevant_filenames": [
+                "project_horizon.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.3648,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q019",
+            "question": "Which protocol transports Project Ember sensor messages?",
+            "answerable": true,
+            "expected_answer": "MQTT",
+            "generated_answer": "MQTT. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_ember_sensors.txt",
+                "project_ember.txt",
+                "project_vortex.txt",
+                "project_titan.txt"
+            ],
+            "relevant_filenames": [
+                "project_ember.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 2.5474,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q020",
+            "question": "Which database does Project Lumen use?",
+            "answerable": true,
+            "expected_answer": "MariaDB",
+            "generated_answer": "MariaDB stores articles, user accounts, and publishing metadata. [1]",
+            "grounded": true,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_lumen.txt",
+                "project_atlas.txt",
+                "project_nebula.txt",
+                "project_orion.txt"
+            ],
+            "relevant_filenames": [
+                "project_lumen.txt"
+            ],
+            "recall_at_k": 1.0,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.5159,
+            "status": "CORRECT"
+        },
+        {
+            "id": "Q021",
+            "question": "Which cloud provider hosts Project Nebula?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_nebula.txt",
+                "rag_test.pdf",
+                "project_nebula_architecture.txt",
+                "project_cirrus.txt"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 1.8604,
+            "status": "CORRECT_ABSTENTION"
+        },
+        {
+            "id": "Q022",
+            "question": "Who is the CEO of Project Orion?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_orion.txt",
+                "project_orion_infrastructure.txt",
+                "project_summit_operations.txt",
+                "rag_test.docx"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 2.8585,
+            "status": "CORRECT_ABSTENTION"
+        },
+        {
+            "id": "Q023",
+            "question": "What is the annual revenue of Project Atlas?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_atlas.txt",
+                "project_atlas_security.txt",
+                "project_summit_operations.txt",
+                "project_nebula.txt"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 2.1481,
+            "status": "CORRECT_ABSTENTION"
+        },
+        {
+            "id": "Q024",
+            "question": "How many employees work at Project Phoenix?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_phoenix.txt",
+                "project_phoenix_ai.txt",
+                "project_nebula_architecture.txt",
+                "project_summit_operations.txt"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 1.4857,
+            "status": "CORRECT_ABSTENTION"
+        },
+        {
+            "id": "Q025",
+            "question": "What is the registered office address of Project Titan?",
+            "answerable": false,
+            "expected_answer": null,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": true,
+            "retrieved_filenames": [
+                "project_titan.txt",
+                "project_titan_tracking.txt",
+                "project_atlas.txt",
+                "project_atlas_security.txt"
+            ],
+            "relevant_filenames": [],
+            "recall_at_k": null,
+            "reciprocal_rank": null,
+            "latency_seconds": 1.7332,
+            "status": "CORRECT_ABSTENTION"
+        }
+    ]
+}

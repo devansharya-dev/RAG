@@ -181,3 +181,107 @@ def test_retrieve_falls_back_to_vector_search(monkeypatch):
 
     assert result == [{"content": "Vector result"}]
     assert vector_store.search_called is True
+
+
+@pytest.mark.unit
+def test_retrieve_with_reranking_enabled(fake_store, monkeypatch):
+    settings = SimpleNamespace(
+        OLLAMA_EMBED_MODEL="nomic-embed-text",
+        RETRIEVAL_TOP_K=4,
+        RERANKER_ENABLED=True,
+        RERANKER_MODEL="cross-encoder/ms-marco-MiniLM-L-6-v2",
+        RERANKER_CANDIDATES=20,
+    )
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.get_settings",
+        lambda: settings,
+    )
+
+    candidates = [
+        {
+            "chunk_id": f"chunk-{i}",
+            "content": f"Document content {i}",
+            "metadata": {},
+            "similarity": 0.01 * i,
+        }
+        for i in range(5)
+    ]
+
+    fake_store.hybrid_search.return_value = candidates
+
+    mock_reranker = Mock()
+    mock_reranker.rerank.return_value = candidates[:4]
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.CrossEncoderReranker",
+        Mock(return_value=mock_reranker),
+    )
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.ollama.embed",
+        Mock(return_value=SimpleNamespace(embeddings=[[0.1, 0.2]])),
+    )
+
+    retriever = Retriever(vector_store=fake_store)
+    results = retriever.retrieve("test query")
+
+    assert len(results) == 4
+
+    fake_store.hybrid_search.assert_called_once_with(
+        query_embedding=[0.1, 0.2],
+        query_text="test query",
+        top_k=20,
+        filters=None,
+    )
+
+    mock_reranker.rerank.assert_called_once_with(
+        query="test query",
+        documents=candidates,
+        top_k=4,
+    )
+
+
+@pytest.mark.unit
+def test_retrieve_does_not_initialize_reranker_when_disabled(
+    fake_store, monkeypatch
+):
+    settings = SimpleNamespace(
+        OLLAMA_EMBED_MODEL="nomic-embed-text",
+        RETRIEVAL_TOP_K=4,
+        RERANKER_ENABLED=False,
+        RERANKER_MODEL="cross-encoder/ms-marco-MiniLM-L-6-v2",
+        RERANKER_CANDIDATES=20,
+    )
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.get_settings",
+        lambda: settings,
+    )
+
+    mock_reranker_class = Mock()
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.CrossEncoderReranker",
+        mock_reranker_class,
+    )
+
+    monkeypatch.setattr(
+        "app.retrieval.retriever.ollama.embed",
+        Mock(return_value=SimpleNamespace(embeddings=[[0.1, 0.2]])),
+    )
+
+    retriever = Retriever(vector_store=fake_store)
+    results = retriever.retrieve("test query")
+
+    assert len(results) == 1
+    assert results[0]["chunk_id"] == "chunk-001"
+
+    fake_store.hybrid_search.assert_called_once_with(
+        query_embedding=[0.1, 0.2],
+        query_text="test query",
+        top_k=4,
+        filters=None,
+    )
+
+    mock_reranker_class.assert_not_called()

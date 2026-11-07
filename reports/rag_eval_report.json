@@ -3,22 +3,22 @@
     "top_k": 4,
     "metrics": {
         "recall_at_k": 1.0,
-        "mean_reciprocal_rank": 0.7416666666666667,
-        "answer_accuracy": 1.0,
+        "mean_reciprocal_rank": 0.8583333333333332,
+        "answer_accuracy": 0.9,
         "abstention_accuracy": 1.0,
-        "grounded_answer_rate": 0.8,
-        "average_latency_seconds": 2.8573060360050295
+        "grounded_answer_rate": 0.72,
+        "average_latency_seconds": 2.8248377680033445
     },
     "retrieval_metrics_at_k": {
         "1": {
-            "precision": 0.55,
-            "recall": 0.55,
-            "hit_rate": 0.55
+            "precision": 0.75,
+            "recall": 0.75,
+            "hit_rate": 0.75
         },
         "2": {
-            "precision": 0.4,
-            "recall": 0.8,
-            "hit_rate": 0.8
+            "precision": 0.45,
+            "recall": 0.9,
+            "hit_rate": 0.9
         },
         "4": {
             "precision": 0.25,
@@ -28,10 +28,10 @@
     },
     "counts": {
         "answerable_questions": 20,
-        "correct_answers": 20,
+        "correct_answers": 18,
         "unanswerable_questions": 5,
         "correct_abstentions": 5,
-        "grounded_answers": 20
+        "grounded_answers": 18
     },
     "results": [
         {
@@ -39,22 +39,22 @@
             "question": "How many production processing nodes does Project Nebula use?",
             "answerable": true,
             "expected_answer": "48",
-            "generated_answer": "48 [1]",
-            "grounded": true,
-            "answer_correct": true,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": false,
             "retrieved_filenames": [
                 "project_nebula_architecture.txt",
                 "rag_test.pdf",
                 "project_nebula.txt",
-                "project_orion_infrastructure.txt"
+                "rag_test.docx"
             ],
             "relevant_filenames": [
                 "project_nebula.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 3.0914,
-            "status": "CORRECT"
+            "latency_seconds": 7.9339,
+            "status": "INCORRECT"
         },
         {
             "id": "Q002",
@@ -67,15 +67,15 @@
             "retrieved_filenames": [
                 "project_nebula.txt",
                 "rag_test.pdf",
-                "project_nebula_architecture.txt",
-                "project_cirrus_network.txt"
+                "project_meridian.txt",
+                "project_nebula_architecture.txt"
             ],
             "relevant_filenames": [
                 "project_nebula.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.1687,
+            "latency_seconds": 3.126,
             "status": "CORRECT"
         },
         {
@@ -83,21 +83,21 @@
             "question": "When was Project Nebula officially launched?",
             "answerable": true,
             "expected_answer": "March 2026",
-            "generated_answer": "The production infrastructure of Project Nebula was officially launched in March 2026. [2]",
+            "generated_answer": "The platform was officially launched in March 2026. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "rag_test.pdf",
                 "project_nebula.txt",
+                "rag_test.pdf",
                 "project_nebula_architecture.txt",
-                "project_titan.txt"
+                "project_phoenix.txt"
             ],
             "relevant_filenames": [
                 "project_nebula.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.5,
-            "latency_seconds": 2.9433,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.9123,
             "status": "CORRECT"
         },
         {
@@ -105,12 +105,12 @@
             "question": "How many microservices does Project Orion contain?",
             "answerable": true,
             "expected_answer": "12",
-            "generated_answer": "Project Orion contains 12 microservices. [1] [3]",
+            "generated_answer": "Project Orion has 12 microservices. [1] [2]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "project_orion_infrastructure.txt",
                 "rag_test.docx",
+                "project_orion_infrastructure.txt",
                 "project_orion.txt",
                 "project_nebula_architecture.txt"
             ],
@@ -119,7 +119,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 2.8661,
+            "latency_seconds": 3.0092,
             "status": "CORRECT"
         },
         {
@@ -127,43 +127,43 @@
             "question": "Which backend framework does Project Orion use?",
             "answerable": true,
             "expected_answer": "FastAPI",
-            "generated_answer": "FastAPI [1] [3]",
-            "grounded": true,
-            "answer_correct": true,
+            "generated_answer": "The provided documents do not contain enough information to answer this.",
+            "grounded": false,
+            "answer_correct": false,
             "retrieved_filenames": [
-                "project_orion_infrastructure.txt",
-                "rag_test.docx",
                 "project_orion.txt",
-                "project_nebula.txt"
+                "rag_test.docx",
+                "project_aurora.txt",
+                "project_orion_infrastructure.txt"
             ],
             "relevant_filenames": [
                 "project_orion.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 3.0564,
-            "status": "CORRECT"
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.7731,
+            "status": "INCORRECT"
         },
         {
             "id": "Q006",
             "question": "Which technology provides caching in Project Orion?",
             "answerable": true,
             "expected_answer": "Redis",
-            "generated_answer": "Redis. [1]",
+            "generated_answer": "Redis. [1] [2]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_orion_infrastructure.txt",
-                "rag_test.docx",
                 "project_orion.txt",
-                "project_cirrus_network.txt"
+                "rag_test.docx",
+                "project_cirrus.txt"
             ],
             "relevant_filenames": [
                 "project_orion.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 2.4519,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 2.7865,
             "status": "CORRECT"
         },
         {
@@ -185,7 +185,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.607,
+            "latency_seconds": 2.7485,
             "status": "CORRECT"
         },
         {
@@ -198,16 +198,16 @@
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_atlas.txt",
-                "project_summit.txt",
+                "project_atlas_security.txt",
                 "project_summit_operations.txt",
-                "project_atlas_security.txt"
+                "project_summit.txt"
             ],
             "relevant_filenames": [
                 "project_atlas.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.2289,
+            "latency_seconds": 2.5215,
             "status": "CORRECT"
         },
         {
@@ -221,15 +221,15 @@
             "retrieved_filenames": [
                 "project_phoenix.txt",
                 "project_phoenix_ai.txt",
-                "project_nebula.txt",
-                "project_summit_operations.txt"
+                "project_horizon_models.txt",
+                "project_aurora.txt"
             ],
             "relevant_filenames": [
                 "project_phoenix.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.8007,
+            "latency_seconds": 2.8245,
             "status": "CORRECT"
         },
         {
@@ -243,15 +243,15 @@
             "retrieved_filenames": [
                 "project_phoenix.txt",
                 "project_phoenix_ai.txt",
-                "project_vortex.txt",
-                "project_atlas.txt"
+                "project_cirrus_network.txt",
+                "project_titan.txt"
             ],
             "relevant_filenames": [
                 "project_phoenix.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.5331,
+            "latency_seconds": 2.5017,
             "status": "CORRECT"
         },
         {
@@ -263,17 +263,17 @@
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "project_cirrus_network.txt",
                 "project_cirrus.txt",
-                "project_orion_infrastructure.txt",
-                "project_delta.txt"
+                "project_cirrus_network.txt",
+                "project_phoenix.txt",
+                "project_delta_ci.txt"
             ],
             "relevant_filenames": [
                 "project_cirrus.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.5,
-            "latency_seconds": 2.4532,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.6659,
             "status": "CORRECT"
         },
         {
@@ -286,16 +286,16 @@
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_aurora.txt",
-                "project_aurora_analytics.txt",
+                "project_orion.txt",
                 "rag_test.docx",
-                "project_orion_infrastructure.txt"
+                "project_lumen.txt"
             ],
             "relevant_filenames": [
                 "project_aurora.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.8832,
+            "latency_seconds": 3.0534,
             "status": "CORRECT"
         },
         {
@@ -307,17 +307,17 @@
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "project_vortex.txt",
                 "project_vortex_detection.txt",
-                "project_nebula.txt",
-                "project_atlas_security.txt"
+                "project_vortex.txt",
+                "project_atlas_security.txt",
+                "project_titan_tracking.txt"
             ],
             "relevant_filenames": [
                 "project_vortex.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 1.0,
-            "latency_seconds": 2.5325,
+            "reciprocal_rank": 0.5,
+            "latency_seconds": 2.5926,
             "status": "CORRECT"
         },
         {
@@ -331,15 +331,15 @@
             "retrieved_filenames": [
                 "project_meridian.txt",
                 "project_meridian_compliance.txt",
-                "project_delta.txt",
-                "project_phoenix.txt"
+                "project_phoenix.txt",
+                "project_phoenix_ai.txt"
             ],
             "relevant_filenames": [
                 "project_meridian.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6899,
+            "latency_seconds": 2.5742,
             "status": "CORRECT"
         },
         {
@@ -347,21 +347,21 @@
             "question": "Which database does Project Summit use?",
             "answerable": true,
             "expected_answer": "PostgreSQL",
-            "generated_answer": "PostgreSQL stores appointment and patient scheduling records. [2]",
+            "generated_answer": "PostgreSQL. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "project_summit_operations.txt",
                 "project_summit.txt",
-                "project_atlas.txt",
-                "project_nebula.txt"
+                "project_summit_operations.txt",
+                "project_aurora.txt",
+                "rag_test.pdf"
             ],
             "relevant_filenames": [
                 "project_summit.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.5,
-            "latency_seconds": 2.4726,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.495,
             "status": "CORRECT"
         },
         {
@@ -374,16 +374,16 @@
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_titan.txt",
+                "project_orion.txt",
                 "project_titan_tracking.txt",
-                "project_delta.txt",
-                "project_atlas.txt"
+                "rag_test.docx"
             ],
             "relevant_filenames": [
                 "project_titan.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.915,
+            "latency_seconds": 2.7677,
             "status": "CORRECT"
         },
         {
@@ -391,21 +391,21 @@
             "question": "Which tool manages Project Delta's continuous integration pipeline?",
             "answerable": true,
             "expected_answer": "Jenkins",
-            "generated_answer": "Jenkins coordinates the continuous integration pipeline. [1]",
+            "generated_answer": "Jenkins. [2]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
-                "project_delta_ci.txt",
                 "project_delta.txt",
-                "project_nebula.txt",
-                "project_titan.txt"
+                "project_delta_ci.txt",
+                "project_horizon_models.txt",
+                "project_vortex.txt"
             ],
             "relevant_filenames": [
                 "project_delta.txt"
             ],
             "recall_at_k": 1.0,
-            "reciprocal_rank": 0.5,
-            "latency_seconds": 2.6032,
+            "reciprocal_rank": 1.0,
+            "latency_seconds": 2.6499,
             "status": "CORRECT"
         },
         {
@@ -419,15 +419,15 @@
             "retrieved_filenames": [
                 "project_horizon.txt",
                 "project_horizon_models.txt",
-                "project_summit.txt",
-                "project_summit_operations.txt"
+                "project_phoenix_ai.txt",
+                "project_summit.txt"
             ],
             "relevant_filenames": [
                 "project_horizon.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6426,
+            "latency_seconds": 2.6834,
             "status": "CORRECT"
         },
         {
@@ -441,15 +441,15 @@
             "retrieved_filenames": [
                 "project_ember_sensors.txt",
                 "project_ember.txt",
-                "project_vortex.txt",
-                "project_titan.txt"
+                "project_titan_tracking.txt",
+                "project_cirrus_network.txt"
             ],
             "relevant_filenames": [
                 "project_ember.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 3.581,
+            "latency_seconds": 2.8265,
             "status": "CORRECT"
         },
         {
@@ -462,16 +462,16 @@
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_lumen.txt",
-                "project_atlas.txt",
-                "project_nebula.txt",
-                "project_orion.txt"
+                "project_meridian.txt",
+                "rag_test.pdf",
+                "project_atlas.txt"
             ],
             "relevant_filenames": [
                 "project_lumen.txt"
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.4771,
+            "latency_seconds": 2.806,
             "status": "CORRECT"
         },
         {
@@ -484,14 +484,14 @@
             "answer_correct": true,
             "retrieved_filenames": [
                 "project_nebula.txt",
-                "rag_test.pdf",
                 "project_nebula_architecture.txt",
+                "rag_test.pdf",
                 "project_cirrus.txt"
             ],
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 3.0872,
+            "latency_seconds": 3.1471,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -505,13 +505,13 @@
             "retrieved_filenames": [
                 "project_orion.txt",
                 "project_orion_infrastructure.txt",
-                "project_summit_operations.txt",
-                "rag_test.docx"
+                "rag_test.docx",
+                "project_aurora.txt"
             ],
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 3.88,
+            "latency_seconds": 1.8384,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -525,13 +525,13 @@
             "retrieved_filenames": [
                 "project_atlas.txt",
                 "project_atlas_security.txt",
-                "project_summit_operations.txt",
-                "project_nebula.txt"
+                "project_orion.txt",
+                "project_meridian_compliance.txt"
             ],
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 2.1288,
+            "latency_seconds": 1.9015,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -545,13 +545,13 @@
             "retrieved_filenames": [
                 "project_phoenix.txt",
                 "project_phoenix_ai.txt",
-                "project_nebula_architecture.txt",
-                "project_summit_operations.txt"
+                "project_orion_infrastructure.txt",
+                "project_nebula_architecture.txt"
             ],
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.9141,
+            "latency_seconds": 1.7442,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -565,13 +565,13 @@
             "retrieved_filenames": [
                 "project_titan.txt",
                 "project_titan_tracking.txt",
-                "project_atlas.txt",
-                "project_atlas_security.txt"
+                "project_orion.txt",
+                "project_orion_infrastructure.txt"
             ],
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 3.4244,
+            "latency_seconds": 1.738,
             "status": "CORRECT_ABSTENTION"
         }
     ]
