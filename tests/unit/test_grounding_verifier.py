@@ -327,3 +327,33 @@ def test_unrelated_evidence_quote_is_rejected(sample_contexts):
     assert result["supported"] is False
     assert result["claims"][0]["evidence_valid"] is True
     assert result["claims"][0]["answer_evidence_match"] is False
+
+
+def test_wrong_passage_number_is_corrected_when_quote_exists_elsewhere(
+    sample_contexts,
+):
+    response = make_response(
+        claim="Project Orion uses FastAPI.",
+        answer_quote="FastAPI",
+        verdict="SUPPORTED",
+        passage=1,
+        quote="Project Orion uses FastAPI.",
+    )
+
+    verifier = GroundingVerifier(
+        llm_client=FakeLLMClient(response)
+    )
+
+    result = verifier.verify(
+        "FastAPI",
+        sample_contexts,
+        question="Which backend framework does Project Orion use?",
+    )
+
+    assert result["supported"] is True
+    assert result["claims"][0]["verdict"] == "SUPPORTED"
+    assert result["claims"][0]["evidence_valid"] is True
+    assert result["claims"][0]["evidence_passage"] == 2
+
+    assert result["claims"][0]["answer_evidence_match"] is True
+    

@@ -351,8 +351,6 @@ no factual claims.
                 if not isinstance(evidence_quote, str):
                     raise ValueError("Invalid evidence quote.")
 
-                evidence_valid = False
-
                 if passage_number is not None:
                     if (
                         isinstance(passage_number, bool)
@@ -362,20 +360,80 @@ no factual claims.
                         raise ValueError(
                             "Verifier referenced an invalid passage."
                         )
-
-                    original_content = str(
-                        contexts[passage_number - 1].get("content") or ""
+                elif verdict == "SUPPORTED":
+                    raise ValueError(
+                        "Supported claim has no evidence passage."
                     )
 
-                    normalized_quote = self._normalize_text(evidence_quote)
-                    normalized_content = self._normalize_text(
-                        original_content
-                    )
+                evidence_valid = False
+                resolved_passage_number = passage_number
+                normalized_quote = self._normalize_text(evidence_quote)
 
-                    evidence_valid = (
-                        bool(normalized_quote)
-                        and normalized_quote in normalized_content
-                    )
+                if normalized_quote:
+                    # Prefer the verifier's selected passage, but correct
+                    # its reference if the exact quote exists elsewhere.
+                    candidate_indices = list(range(len(contexts)))
+
+                    if passage_number is not None:
+                        selected_index = passage_number - 1
+                        candidate_indices.remove(selected_index)
+                        candidate_indices.insert(0, selected_index)
+
+                    for index in candidate_indices:
+                        original_content = str(
+                            contexts[index].get("content") or ""
+                        )
+                        normalized_content = self._normalize_text(
+                            original_content
+                        )
+
+                        if normalized_quote in normalized_content:
+                            evidence_valid = True
+                            resolved_passage_number = index + 1
+                            break
+
+                # If the model paraphrases its evidence quote instead
+                # of copying it exactly, recover the original source
+                # sentence containing the exact answer quote.
+                normalized_answer_quote = self._normalize_text(
+                    answer_quote
+                )
+                normalized_model_quote = self._normalize_text(
+                    evidence_quote
+                )
+
+                if (
+                    verdict == "SUPPORTED"
+                    and not evidence_valid
+                    and bool(normalized_answer_quote)
+                    and normalized_answer_quote in normalized_model_quote
+                ):
+
+                    for index, context in enumerate(contexts):
+                        original_content = str(
+                            context.get("content") or ""
+                        )
+
+                        sentences = re.split(
+                            r"(?<=[.!?])\s+|\n+",
+                            original_content.strip(),
+                        )
+
+                        matching_sentence = next(
+                            (
+                                sentence.strip()
+                                for sentence in sentences
+                                if normalized_answer_quote
+                                in self._normalize_text(sentence)
+                            ),
+                            None,
+                        )
+
+                        if matching_sentence:
+                            evidence_quote = matching_sentence
+                            evidence_valid = True
+                            resolved_passage_number = index + 1
+                            break
 
                 # A supported quote must contain the factual answer
                 # itself. This catches irrelevant quotes that merely
@@ -404,7 +462,7 @@ no factual claims.
                             else "NOT_SUPPORTED"
                         )
                     ),
-                    "evidence_passage": passage_number,
+                    "evidence_passage": resolved_passage_number,
                     "evidence_quote": evidence_quote,
                     "evidence_valid": evidence_valid,
                     "answer_evidence_match": answer_evidence_match,

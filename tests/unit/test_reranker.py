@@ -1,5 +1,5 @@
 
-"""Tests for cross-encoder document reranking."""
+
 
 from unittest.mock import Mock
 
@@ -113,3 +113,4 @@ def test_reranker_rejects_invalid_top_k(documents):
 
     with pytest.raises(ValueError, match="top_k must be at least 1"):
         reranker.rerank("test query", documents, top_k=0)
+

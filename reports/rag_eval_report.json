@@ -4,10 +4,10 @@
     "metrics": {
         "recall_at_k": 1.0,
         "mean_reciprocal_rank": 0.8583333333333332,
-        "answer_accuracy": 0.9,
+        "answer_accuracy": 1.0,
         "abstention_accuracy": 1.0,
-        "grounded_answer_rate": 0.72,
-        "average_latency_seconds": 2.8248377680033445
+        "grounded_answer_rate": 0.8,
+        "average_latency_seconds": 3.0305841959943063
     },
     "retrieval_metrics_at_k": {
         "1": {
@@ -28,10 +28,10 @@
     },
     "counts": {
         "answerable_questions": 20,
-        "correct_answers": 18,
+        "correct_answers": 20,
         "unanswerable_questions": 5,
         "correct_abstentions": 5,
-        "grounded_answers": 18
+        "grounded_answers": 20
     },
     "results": [
         {
@@ -39,9 +39,9 @@
             "question": "How many production processing nodes does Project Nebula use?",
             "answerable": true,
             "expected_answer": "48",
-            "generated_answer": "The provided documents do not contain enough information to answer this.",
-            "grounded": false,
-            "answer_correct": false,
+            "generated_answer": "48 [1]",
+            "grounded": true,
+            "answer_correct": true,
             "retrieved_filenames": [
                 "project_nebula_architecture.txt",
                 "rag_test.pdf",
@@ -53,8 +53,8 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 7.9339,
-            "status": "INCORRECT"
+            "latency_seconds": 18.7021,
+            "status": "CORRECT"
         },
         {
             "id": "Q002",
@@ -75,7 +75,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.126,
+            "latency_seconds": 3.1401,
             "status": "CORRECT"
         },
         {
@@ -97,7 +97,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.9123,
+            "latency_seconds": 3.0157,
             "status": "CORRECT"
         },
         {
@@ -119,7 +119,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.3333333333333333,
-            "latency_seconds": 3.0092,
+            "latency_seconds": 2.5775,
             "status": "CORRECT"
         },
         {
@@ -127,9 +127,9 @@
             "question": "Which backend framework does Project Orion use?",
             "answerable": true,
             "expected_answer": "FastAPI",
-            "generated_answer": "The provided documents do not contain enough information to answer this.",
-            "grounded": false,
-            "answer_correct": false,
+            "generated_answer": "FastAPI. [1]",
+            "grounded": true,
+            "answer_correct": true,
             "retrieved_filenames": [
                 "project_orion.txt",
                 "rag_test.docx",
@@ -141,15 +141,15 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.7731,
-            "status": "INCORRECT"
+            "latency_seconds": 2.561,
+            "status": "CORRECT"
         },
         {
             "id": "Q006",
             "question": "Which technology provides caching in Project Orion?",
             "answerable": true,
             "expected_answer": "Redis",
-            "generated_answer": "Redis. [1] [2]",
+            "generated_answer": "Redis. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -163,7 +163,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.7865,
+            "latency_seconds": 2.6108,
             "status": "CORRECT"
         },
         {
@@ -185,7 +185,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.7485,
+            "latency_seconds": 2.527,
             "status": "CORRECT"
         },
         {
@@ -207,7 +207,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.5215,
+            "latency_seconds": 2.2994,
             "status": "CORRECT"
         },
         {
@@ -229,7 +229,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.8245,
+            "latency_seconds": 2.3895,
             "status": "CORRECT"
         },
         {
@@ -273,7 +273,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6659,
+            "latency_seconds": 2.3791,
             "status": "CORRECT"
         },
         {
@@ -295,7 +295,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 3.0534,
+            "latency_seconds": 2.4897,
             "status": "CORRECT"
         },
         {
@@ -317,7 +317,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.5926,
+            "latency_seconds": 2.7656,
             "status": "CORRECT"
         },
         {
@@ -339,7 +339,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.5742,
+            "latency_seconds": 2.7726,
             "status": "CORRECT"
         },
         {
@@ -361,7 +361,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.495,
+            "latency_seconds": 2.3087,
             "status": "CORRECT"
         },
         {
@@ -383,7 +383,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.7677,
+            "latency_seconds": 2.3534,
             "status": "CORRECT"
         },
         {
@@ -391,7 +391,7 @@
             "question": "Which tool manages Project Delta's continuous integration pipeline?",
             "answerable": true,
             "expected_answer": "Jenkins",
-            "generated_answer": "Jenkins. [2]",
+            "generated_answer": "Jenkins. [1]",
             "grounded": true,
             "answer_correct": true,
             "retrieved_filenames": [
@@ -405,7 +405,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6499,
+            "latency_seconds": 2.4721,
             "status": "CORRECT"
         },
         {
@@ -427,7 +427,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.6834,
+            "latency_seconds": 2.5633,
             "status": "CORRECT"
         },
         {
@@ -449,7 +449,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 0.5,
-            "latency_seconds": 2.8265,
+            "latency_seconds": 2.4102,
             "status": "CORRECT"
         },
         {
@@ -471,7 +471,7 @@
             ],
             "recall_at_k": 1.0,
             "reciprocal_rank": 1.0,
-            "latency_seconds": 2.806,
+            "latency_seconds": 2.484,
             "status": "CORRECT"
         },
         {
@@ -491,7 +491,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 3.1471,
+            "latency_seconds": 1.7243,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -511,7 +511,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.8384,
+            "latency_seconds": 1.8073,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -531,7 +531,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.9015,
+            "latency_seconds": 1.624,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -551,7 +551,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.7442,
+            "latency_seconds": 1.6525,
             "status": "CORRECT_ABSTENTION"
         },
         {
@@ -571,7 +571,7 @@
             "relevant_filenames": [],
             "recall_at_k": null,
             "reciprocal_rank": null,
-            "latency_seconds": 1.738,
+            "latency_seconds": 1.6329,
             "status": "CORRECT_ABSTENTION"
         }
     ]
