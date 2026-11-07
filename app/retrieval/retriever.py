@@ -6,6 +6,7 @@ from typing import Any
 import ollama
 
 from app.core.config import get_settings
+from app.retrieval.reranker import CrossEncoderReranker
 from app.vectorstore.supabase_store import SupabaseVectorStore
 
 
@@ -21,13 +22,20 @@ class Retriever:
         self.vector_store = vector_store or SupabaseVectorStore()
         self.top_k = top_k or self.settings.RETRIEVAL_TOP_K
 
+        self.reranker = None
+
+        if self.settings.RERANKER_ENABLED:
+            self.reranker = CrossEncoderReranker(
+                model_name=self.settings.RERANKER_MODEL,
+            )
+
     def retrieve(
         self,
         query: str,
         top_k: int | None = None,
         filters: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        """Retrieve chunks using hybrid search when supported."""
+        """Retrieve chunks using hybrid search and optional reranking."""
 
         if not query or not query.strip():
             raise ValueError("Query cannot be empty.")
@@ -50,6 +58,15 @@ class Retriever:
         query_embedding = response.embeddings[0]
         result_count = top_k or self.top_k
 
+        # Retrieve additional candidates when reranking is enabled.
+        candidate_count = result_count
+
+        if self.reranker is not None:
+            candidate_count = min(
+                max(result_count, self.settings.RERANKER_CANDIDATES),
+                20,
+            )
+
         # Prefer hybrid search when the store supports it.
         hybrid_method = getattr(
             self.vector_store,
@@ -58,16 +75,25 @@ class Retriever:
         )
 
         if callable(hybrid_method):
-            return hybrid_method(
+            candidates = hybrid_method(
                 query_embedding=query_embedding,
                 query_text=clean_query,
-                top_k=result_count,
+                top_k=candidate_count,
+                filters=filters,
+            )
+        else:
+            # Fallback for vector stores that only support vector search.
+            candidates = self.vector_store.similarity_search(
+                query_embedding=query_embedding,
+                top_k=candidate_count,
                 filters=filters,
             )
 
-        # Fallback for vector stores that only support vector search.
-        return self.vector_store.similarity_search(
-            query_embedding=query_embedding,
+        if self.reranker is None or not candidates:
+            return candidates
+
+        return self.reranker.rerank(
+            query=clean_query,
+            documents=candidates,
             top_k=result_count,
-            filters=filters,
         )

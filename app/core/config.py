@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP: int = 150
     RETRIEVAL_TOP_K: int = 4
 
+   # Reranker settings
+    RERANKER_ENABLED: bool = False
+    RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    RERANKER_CANDIDATES: int = 20
+
     # Logging
     LOG_LEVEL: str = "INFO"
 
