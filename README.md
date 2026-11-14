@@ -58,7 +58,7 @@ LocalRAG provides an end-to-end question-answering pipeline over private busines
 |---|---|
 | **Multi-Format Document Ingestion** | Ingests `.pdf`, `.docx`, `.txt`, `.md`, `.csv`, and `.log` files up to 10 MB per file. Uploaded files are stored in `data/documents/` prefixed with a 16-character content hash to prevent collisions. |
 | **PDF Extraction** | Implemented via PyMuPDF (`PDFLoader`), extracting text page-by-page while tracking `page_number`, checking for encryption/passwords, and detecting unscannable documents. |
-| **Word Document Parsing** | Implemented via `python-docx` (`DOCXLoader`), extracting paragraphs and structured table cells formatted as pipe-separated rows (`cell1 \| cell2`). |
+| **Word Document Parsing** | Implemented via `python-docx` (`DOCXLoader`), extracting paragraphs and structured table cells formatted as pipe-separated rows (e.g. `cell1 / cell2`). |
 | **Plain Text & Delimited Text** | Implemented via `TextLoader`, featuring automatic encoding fallback (`utf-8-sig`, `utf-8`, `cp1252`, `latin-1`) for logs, CSV files, and markdown notes. |
 | **Text Cleaning & Normalization** | Implemented in `TextCleaner`: Unicode NFC normalization, CRLF/CR to LF normalization, form-feed conversion, control/surrogate character stripping, tab-to-space expansion (4 spaces), trailing whitespace stripping, and blank line coalescing (maximum 1 blank line between blocks). |
 | **Deterministic Structure-Aware Chunking** | Implemented in `Chunker`: Splits text into configurable overlapping chunks (default 1000 characters, 150 characters overlap). Respects paragraph breaks (`\n\n`), sentence boundaries, and word boundaries. Overlap context from prior segments is preserved across chunk boundaries without truncation. |
@@ -107,11 +107,11 @@ LocalRAG provides an end-to-end question-answering pipeline over private busines
 
 ```mermaid
 flowchart TD
-    Client["Client / Application\n(REST API / Web / CLI)"]
+    Client["Client / Application<br/>(REST API / Web / CLI)"]
 
     subgraph APILayer["FastAPI Application Layer (Port 8000)"]
-        HealthRoute["/health & /health/ready"]
-        DocRoute["/api/v1/documents/*"]
+        HealthRoute["/health and /health/ready"]
+        DocRoute["/api/v1/documents"]
         ChatRoute["/api/v1/chat"]
     end
 
@@ -121,32 +121,32 @@ flowchart TD
     end
 
     subgraph ProcessingPipeline["Document Processing Engine"]
-        Loaders["Document Loaders\n(PDF, DOCX, TXT, MD, CSV, LOG)"]
-        Cleaner["TextCleaner\n(Unicode NFC, line endings, whitespace)"]
-        ChunkerMod["Chunker\n(1000 chars, 150 overlap)"]
+        Loaders["Document Loaders<br/>(PDF, DOCX, TXT, MD, CSV, LOG)"]
+        Cleaner["TextCleaner<br/>(Unicode NFC, line endings, whitespace)"]
+        ChunkerMod["Chunker<br/>(1000 chars, 150 overlap)"]
     end
 
     subgraph StorageLayer["Supabase PostgreSQL (pgvector)"]
-        DocTable[("documents table\n(metadata & content_hash)")]
-        ChunkTable[("document_chunks table\n(content, metadata, vector 768)")]
-        RPCFuncs["RPC Functions\n(match_document_chunks, hybrid_search)"]
+        DocTable[("documents table<br/>(metadata and content_hash)")]
+        ChunkTable[("document_chunks table<br/>(content, metadata, vector 768)")]
+        RPCFuncs["RPC Functions<br/>(match_document_chunks, hybrid_search)"]
     end
 
-    subgraph RetrievalLayer["Retrieval & Ranking Engine"]
+    subgraph RetrievalLayer["Retrieval and Ranking Engine"]
         RetrieverMod["Retriever"]
-        RerankerMod["CrossEncoderReranker\n(ms-marco-MiniLM-L-6-v2)"]
+        RerankerMod["CrossEncoderReranker<br/>(ms-marco-MiniLM-L-6-v2)"]
     end
 
-    subgraph GenerationLayer["Grounded Generation & Verification"]
+    subgraph GenerationLayer["Grounded Generation and Verification"]
         PromptBld["PromptBuilder"]
-        AnswerGen["AnswerGenerator\n(Citation parser & cleaner)"]
-        GroundVerifier["GroundingVerifier\n(granite3-dense:2b)"]
+        AnswerGen["AnswerGenerator<br/>(Citation parser and cleaner)"]
+        GroundVerifier["GroundingVerifier<br/>(granite3-dense:2b)"]
     end
 
     subgraph InferenceEngine["Local Ollama Engine (Port 11434)"]
-        EmbedModel["nomic-embed-text\n(768-dim Embeddings)"]
-        ChatModel["llama3.2:3b\n(Answer Synthesis)"]
-        VerifierModel["granite3-dense:2b\n(Claim Verification)"]
+        EmbedModel["nomic-embed-text<br/>(768-dim Embeddings)"]
+        ChatModel["llama3.2:3b<br/>(Answer Synthesis)"]
+        VerifierModel["granite3-dense:2b<br/>(Claim Verification)"]
     end
 
     Client --> DocRoute
@@ -156,14 +156,17 @@ flowchart TD
     DocRoute --> IngestionPipe
     ChatRoute --> RAGServ
 
-    IngestionPipe --> Loaders --> Cleaner --> ChunkerMod
+    IngestionPipe --> Loaders
+    Loaders --> Cleaner
+    Cleaner --> ChunkerMod
     ChunkerMod --> EmbedModel
-    EmbedModel --> StorageLayer
+    EmbedModel --> ChunkTable
     IngestionPipe --> DocTable
 
     RAGServ --> RetrieverMod
     RetrieverMod --> EmbedModel
-    RetrieverMod --> RPCFuncs --> ChunkTable
+    RetrieverMod --> RPCFuncs
+    RPCFuncs --> ChunkTable
     RetrieverMod --> RerankerMod
 
     RAGServ --> AnswerGen
@@ -181,34 +184,34 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start([Upload File]) --> ValidateFile{File Valid?<br/>Ext in allowed set & <= 10MB}
-    ValidateFile -- No --> Err400[Return 400 Bad Request / 413 Payload Too Large]
-    ValidateFile -- Yes --> SaveDisk[Persist to data/documents/<br/>with SHA-256 filename prefix]
+    Start(["Upload File"]) --> ValidateFile{"File Valid?<br/>Allowed extension and size under 10MB"}
+    ValidateFile -- "No" --> Err400["Return 400 Bad Request or 413 Payload Too Large"]
+    ValidateFile -- "Yes" --> SaveDisk["Persist to data/documents/<br/>with SHA-256 filename prefix"]
 
-    SaveDisk --> LoaderSelect{Select Loader by Extension}
-    LoaderSelect -- .pdf --> PDFL[PDFLoader: PyMuPDF page-by-page]
-    LoaderSelect -- .docx --> DOCXL[DOCXLoader: paragraphs & tables]
-    LoaderSelect -- .txt/.md/.csv/.log --> TextL[TextLoader: multi-encoding fallback]
+    SaveDisk --> LoaderSelect{"Select Loader by Extension"}
+    LoaderSelect -- "PDF" --> PDFL["PDFLoader: PyMuPDF page-by-page"]
+    LoaderSelect -- "DOCX" --> DOCXL["DOCXLoader: paragraphs and tables"]
+    LoaderSelect -- "Text" --> TextL["TextLoader: multi-encoding fallback"]
 
-    PDFL --> TextClean[TextCleaner: NFC Normalize, Clean Control Chars, Normalize Lines]
+    PDFL --> TextClean["TextCleaner: NFC Normalize and Clean Characters"]
     DOCXL --> TextClean
     TextL --> TextClean
 
-    TextClean --> HashCheck[Compute SHA-256 of Cleaned Text]
-    HashCheck --> QueryDB{Check documents table<br/>by content_hash}
+    TextClean --> HashCheck["Compute SHA-256 of Cleaned Text"]
+    HashCheck --> QueryDB{"Check documents table<br/>by content_hash"}
 
-    QueryDB -- Status == completed --> SkipDuplicate[Return IngestionReport: Skipped duplicate]
-    QueryDB -- Status == failed or Not Found --> UpsertDoc[Insert / Update documents table<br/>Status: processing]
+    QueryDB -- "Completed" --> SkipDuplicate["Return IngestionReport: Skipped duplicate"]
+    QueryDB -- "Failed or New" --> UpsertDoc["Insert or Update documents table<br/>Status: processing"]
 
-    UpsertDoc --> ChunkerExec[Chunker: Split by paragraph & sentence<br/>1000 chars max, 150 overlap]
-    ChunkerExec --> GenEmbed[Ollama: embed with nomic-embed-text]
+    UpsertDoc --> ChunkerExec["Chunker: Split by paragraph and sentence<br/>1000 chars max, 150 overlap"]
+    ChunkerExec --> GenEmbed["Ollama: embed with nomic-embed-text"]
 
-    GenEmbed --> ValidateEmbed{Validate 768 dims<br/>& count == chunks?}
-    ValidateEmbed -- Mismatch --> FailDoc[Mark Document Failed & Clean Chunks]
-    ValidateEmbed -- Valid --> BatchInsert[Batch Insert to document_chunks<br/>100 rows per batch]
+    GenEmbed --> ValidateEmbed{"Validate 768 Dimensions<br/>and chunk count match"}
+    ValidateEmbed -- "Mismatch" --> FailDoc["Mark Document Failed and Clean Chunks"]
+    ValidateEmbed -- "Valid" --> BatchInsert["Batch Insert to document_chunks<br/>100 rows per batch"]
 
-    BatchInsert --> MarkComplete[Update documents table<br/>Status: completed]
-    MarkComplete --> Finish([Return 201 Created & IngestionReport])
+    BatchInsert --> MarkComplete["Update documents table<br/>Status: completed"]
+    MarkComplete --> Finish(["Return 201 Created and IngestionReport"])
 ```
 
 ---
@@ -217,29 +220,29 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    UserQuery([User Query]) --> ValidateQuery{Query Non-Empty?}
-    ValidateQuery -- Empty --> ErrVal[Raise ValueError]
-    ValidateQuery -- Valid --> CheckStore{Vector Store Empty?}
-    CheckStore -- total_chunks == 0 --> ReturnEmpty[Return Empty Candidates]
+    UserQuery(["User Query"]) --> ValidateQuery{"Query Non-Empty?"}
+    ValidateQuery -- "Empty" --> ErrVal["Raise ValueError"]
+    ValidateQuery -- "Valid" --> CheckStore{"Vector Store Empty?"}
+    CheckStore -- "Empty" --> ReturnEmpty["Return Empty Candidates"]
 
-    CheckStore -- Has Chunks --> EmbedQuery[Ollama: Embed Query<br/>model: nomic-embed-text]
-    EmbedQuery --> CandidateCount[Determine Candidate Count<br/>If Reranker: min(max(top_k, 20), 20)<br/>Else: top_k]
+    CheckStore -- "Has Chunks" --> EmbedQuery["Ollama: Embed Query<br/>model: nomic-embed-text"]
+    EmbedQuery --> CandidateCount["Determine Candidate Count<br/>Fetch pool of up to 20 candidates"]
 
-    CandidateCount --> HybridCheck{Store supports hybrid_search?}
-    HybridCheck -- Yes --> HybridRPC["Call hybrid_search_document_chunks<br/>(Vector Cosine <=> & Keyword TS_QUERY via RRF)"]
-    HybridCheck -- No --> VectorRPC["Call match_document_chunks<br/>(Cosine Distance <=>)"]
+    CandidateCount --> HybridCheck{"Store supports hybrid_search?"}
+    HybridCheck -- "Yes" --> HybridRPC["Call hybrid_search_document_chunks<br/>Vector Cosine and Keyword Full-Text via RRF"]
+    HybridCheck -- "No" --> VectorRPC["Call match_document_chunks<br/>Vector Cosine Distance"]
 
-    HybridRPC --> FormatRes[Format & Defensive Metadata Filtering]
+    HybridRPC --> FormatRes["Format and Defensive Metadata Filtering"]
     VectorRPC --> FormatRes
 
-    FormatRes --> RerankerEnabled{RERANKER_ENABLED == True?}
-    RerankerEnabled -- No --> ReturnRetrieval([Return Top-K Retrieved Chunks])
+    FormatRes --> RerankerEnabled{"RERANKER_ENABLED is True?"}
+    RerankerEnabled -- "No" --> ReturnRetrieval(["Return Top-K Retrieved Chunks"])
 
-    RerankerEnabled -- Yes --> CrossEncoderExec["CrossEncoderReranker<br/>(cross-encoder/ms-marco-MiniLM-L-6-v2)"]
-    CrossEncoderExec --> ScorePairs[Predict joint logits for query, chunk pairs]
-    ScorePairs --> SortLogits[Sort descending by reranker_score]
-    SortLogits --> SliceTopK[Slice to requested top_k]
-    SliceTopK --> ReturnReranked([Return Top-K Reranked Chunks])
+    RerankerEnabled -- "Yes" --> CrossEncoderExec["CrossEncoderReranker<br/>(cross-encoder/ms-marco-MiniLM-L-6-v2)"]
+    CrossEncoderExec --> ScorePairs["Predict joint logits for query and chunk pairs"]
+    ScorePairs --> SortLogits["Sort descending by reranker_score"]
+    SortLogits --> SliceTopK["Slice to requested top_k"]
+    SliceTopK --> ReturnReranked(["Return Top-K Reranked Chunks"])
 ```
 
 ---
@@ -248,30 +251,30 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    ContextsInput([Retrieved / Reranked Contexts]) --> HasContexts{Contexts Empty?}
-    HasContexts -- Yes --> FallbackEmpty[Return INSUFFICIENT_ANSWER<br/>grounded=False, sources=[]]
+    ContextsInput(["Retrieved or Reranked Contexts"]) --> HasContexts{"Contexts Empty?"}
+    HasContexts -- "Yes" --> FallbackEmpty["Return INSUFFICIENT_ANSWER<br/>grounded=False, empty sources"]
 
-    HasContexts -- No --> BuildPrompt["PromptBuilder: Format Passages 1..N<br/>Strict System Rules & Output Format"]
+    HasContexts -- "No" --> BuildPrompt["PromptBuilder: Format Passages 1 to N<br/>Strict System Rules and Output Format"]
     BuildPrompt --> LLMCall["LLMClient: Chat Inference<br/>model: llama3.2:3b, temp: 0.2"]
 
-    LLMCall --> ParseLLM{LLM Response Output}
-    ParseLLM -- "do not contain enough information" --> FallbackAbstain[Return INSUFFICIENT_ANSWER<br/>grounded=False, sources=[]]
-    ParseLLM -- Answer Generated --> ExtractCitations["AnswerGenerator: Extract [N] Citations<br/>Filter 1 <= N <= len(contexts)"]
+    LLMCall --> ParseLLM{"LLM Response Output"}
+    ParseLLM -- "Insufficient evidence" --> FallbackAbstain["Return INSUFFICIENT_ANSWER<br/>grounded=False, empty sources"]
+    ParseLLM -- "Answer Generated" --> ExtractCitations["AnswerGenerator: Extract Citations<br/>Filter valid index range"]
 
-    ExtractCitations --> HasCitations{Valid Citations Found?}
-    HasCitations -- No --> FallbackUncited[Return INSUFFICIENT_ANSWER<br/>grounded=False, sources=[]]
-    HasCitations -- Yes --> CleanAnswer[Clean Formatting, Strip Unsupported Tags]
+    ExtractCitations --> HasCitations{"Valid Citations Found?"}
+    HasCitations -- "No" --> FallbackUncited["Return INSUFFICIENT_ANSWER<br/>grounded=False, empty sources"]
+    HasCitations -- "Yes" --> CleanAnswer["Clean Formatting, Strip Unsupported Tags"]
 
-    CleanAnswer --> MapSources[Map Sources to SourceReference Objects]
-    MapSources --> CallVerifier["GroundingVerifier: Inspect (Question, Answer, Cited Contexts)<br/>model: granite3-dense:2b, temp: 0.0"]
+    CleanAnswer --> MapSources["Map Sources to SourceReference Objects"]
+    MapSources --> CallVerifier["GroundingVerifier: Inspect Question, Answer, Contexts<br/>model: granite3-dense:2b, temp: 0.0"]
 
-    CallVerifier --> ParseVerifierJSON{Parse JSON & Validate Claims}
-    ParseVerifierJSON -- Malformed / Exception --> FailClosed[Fail Closed: Verification False]
-    ParseVerifierJSON -- Valid Claims --> ValidateClaims["Verify Claims:<br/>1. answer_quote in Answer<br/>2. evidence_quote in Context<br/>3. answer_quote in evidence_quote<br/>4. verdict == SUPPORTED"]
+    CallVerifier --> ParseVerifierJSON{"Parse JSON and Validate Claims"}
+    ParseVerifierJSON -- "Malformed" --> FailClosed["Fail Closed: Verification False"]
+    ParseVerifierJSON -- "Valid Claims" --> ValidateClaims["Verify Claims:<br/>1. Answer quote in Answer<br/>2. Evidence quote in Context<br/>3. Answer quote in Evidence quote<br/>4. Verdict is SUPPORTED"]
 
-    ValidateClaims --> AllSupported{All Claims SUPPORTED<br/>& Evidence Valid?}
-    AllSupported -- No --> FallbackUnverified[Return INSUFFICIENT_ANSWER<br/>grounded=False, sources=[]]
-    AllSupported -- Yes --> SuccessResponse([Return ChatResponse<br/>Answer, Verified Sources, grounded=True])
+    ValidateClaims --> AllSupported{"All Claims SUPPORTED<br/>and Evidence Valid?"}
+    AllSupported -- "No" --> FallbackUnverified["Return INSUFFICIENT_ANSWER<br/>grounded=False, empty sources"]
+    AllSupported -- "Yes" --> SuccessResponse(["Return ChatResponse<br/>Answer, Verified Sources, grounded=True"])
 ```
 
 ---
@@ -282,7 +285,7 @@ flowchart TD
 sequenceDiagram
     autonumber
     actor Client as User / Client
-    participant API as FastAPI Router (/api/v1/chat)
+    participant API as FastAPI Router
     participant Service as RAGService
     participant Retriever as Retriever
     participant Store as SupabaseVectorStore
@@ -291,7 +294,7 @@ sequenceDiagram
     participant Verifier as GroundingVerifier
     participant Ollama as Ollama Runtime
 
-    Client->>API: POST /api/v1/chat {"question": "...", "top_k": 4}
+    Client->>API: POST /api/v1/chat (question, top_k=4)
     API->>Service: answer(ChatRequest)
     Service->>Retriever: retrieve(query, top_k=4)
 
@@ -302,7 +305,7 @@ sequenceDiagram
     Store->>Store: Execute RPC hybrid_search_document_chunks (RRF)
     Store-->>Retriever: 20 candidate chunks with RRF similarity
 
-    opt RERANKER_ENABLED == True
+    opt If Reranker Enabled
         Retriever->>CrossEnc: rerank(query, candidates, top_k=4)
         CrossEnc->>CrossEnc: Compute joint CrossEncoder scores
         CrossEnc-->>Retriever: Top 4 chunks sorted by reranker_score
@@ -312,15 +315,15 @@ sequenceDiagram
     Service->>Generator: generate(question, contexts)
     Generator->>Generator: PromptBuilder.build(question, contexts)
     Generator->>Ollama: chat(messages, model="llama3.2:3b", temp=0.2)
-    Ollama-->>Generator: Raw answer with citations [1], [2]
-    Generator->>Generator: Extract & clean citations, map cited contexts
-    Generator-->>Service: {"answer": "...", "sources": [...], "grounded": true}
+    Ollama-->>Generator: Raw answer with citations (1), (2)
+    Generator->>Generator: Extract and clean citations, map cited contexts
+    Generator-->>Service: Answer with mapped source references
 
     Service->>Verifier: verify(question, answer, cited_contexts)
     Verifier->>Ollama: chat(verification_prompt, model="granite3-dense:2b", temp=0.0)
-    Ollama-->>Verifier: JSON claims with answer_quote & evidence_quote
-    Verifier->>Verifier: Validate quote containment & verdicts
-    Verifier-->>Service: {"supported": true, "claims": [...]}
+    Ollama-->>Verifier: JSON claims with answer_quote and evidence_quote
+    Verifier->>Verifier: Validate quote containment and verdicts
+    Verifier-->>Service: Verification report (supported = true)
 
     Service-->>API: ChatResponse(question, answer, sources, grounded=True)
     API-->>Client: 200 OK JSON Response
@@ -754,12 +757,12 @@ The persistence model separates high-level document records from individual text
 
 ```mermaid
 erDiagram
-    DOCUMENTS ||--o{ DOCUMENT_CHUNKS : "cascades delete"
+    DOCUMENTS ||--o{ DOCUMENT_CHUNKS : contains
     DOCUMENTS {
         uuid id PK "gen_random_uuid()"
         string filename "Source file name"
         string content_hash "SHA-256 digest of cleaned text"
-        string status "processing | completed | failed"
+        string status "processing, completed, or failed"
         timestamp created_at "Timestamp UTC"
     }
     DOCUMENT_CHUNKS {
@@ -767,8 +770,8 @@ erDiagram
         uuid document_id FK "References documents(id)"
         integer chunk_index "0-based position index"
         text content "Extracted chunk body"
-        jsonb metadata "Arbitrary attributes (page, path, etc.)"
-        vector_768 embedding "768-dimensional float array"
+        jsonb metadata "Arbitrary attributes"
+        vector embedding "768-dimensional float array"
         timestamp created_at "Timestamp UTC"
     }
 ```
@@ -957,26 +960,26 @@ LocalRAG employs a multi-stage retrieval architecture designed to maximize both 
 
 ```mermaid
 flowchart LR
-    Q[User Query] --> Embed[Ollama nomic-embed-text]
-    Q --> TextQ[Raw Text Query]
+    Q["User Query"] --> Embed["Ollama nomic-embed-text"]
+    Q --> TextQ["Raw Text Query"]
     
-    subgraph Stage1["Stage 1: First-Pass Hybrid Retrieval (Supabase RPC)"]
-        Embed --> DenseSearch["Dense ANN Search\n(vector_cosine_ops)"]
-        TextQ --> SparseSearch["Full-Text Keyword Search\n(to_tsvector @@ plainto_tsquery)"]
-        DenseSearch --> RRF["Reciprocal Rank Fusion\nk = 60"]
+    subgraph Stage1["Stage 1: First-Pass Hybrid Retrieval"]
+        Embed --> DenseSearch["Dense ANN Search<br/>(vector_cosine_ops)"]
+        TextQ --> SparseSearch["Full-Text Keyword Search<br/>(to_tsvector match plainto_tsquery)"]
+        DenseSearch --> RRF["Reciprocal Rank Fusion<br/>k = 60"]
         SparseSearch --> RRF
     end
 
-    RRF --> Pool["Candidate Pool (20 chunks)"]
+    RRF --> Pool["Candidate Pool<br/>(20 chunks)"]
 
     subgraph Stage2["Stage 2: Second-Pass Neural Reranking"]
-        Pool --> CE["CrossEncoderReranker\n(ms-marco-MiniLM-L-6-v2)"]
+        Pool --> CE["CrossEncoderReranker<br/>(ms-marco-MiniLM-L-6-v2)"]
         Q --> CE
-        CE --> JointScoring["Joint Token Self-Attention\n(Query <-> Chunk cross-attention)"]
+        CE --> JointScoring["Joint Token Self-Attention<br/>(Query and Chunk cross-attention)"]
         JointScoring --> Sort["Sort descending by reranker_score"]
     end
 
-    Sort --> FinalTopK["Final Context Window (Top 4 chunks)"]
+    Sort --> FinalTopK["Final Context Window<br/>(Top 4 chunks)"]
 ```
 
 ### Stage 1: Hybrid Retrieval & Reciprocal Rank Fusion (RRF)
@@ -1008,22 +1011,22 @@ Hallucination prevention in LocalRAG operates as a strict two-stage defensive ga
 
 ```mermaid
 flowchart TD
-    RawAnswer["Generated Answer from llama3.2:3b\n'Answer: FastAPI [1]\nSources: [1]'"] --> Stage1["Stage 1: Syntactic Citation Extraction"]
+    RawAnswer["Generated Answer from llama3.2:3b<br/>Answer text with citation tags"] --> Stage1["Stage 1: Syntactic Citation Extraction"]
     
-    Stage1 --> CitationRange{"Are citations [N] in range\n1 <= N <= len(contexts)?"}
-    CitationRange -- No valid citations --> Abstain1["Reject Answer\nReturn INSUFFICIENT_ANSWER\ngrounded=False"]
-    CitationRange -- Valid citations --> CleanText["Clean text:\nStrip internal labels & invalid tags"]
+    Stage1 --> CitationRange{"Are citations valid?<br/>Index in range 1 to N"}
+    CitationRange -- "No valid citations" --> Abstain1["Reject Answer<br/>Return INSUFFICIENT_ANSWER<br/>grounded=False"]
+    CitationRange -- "Valid citations" --> CleanText["Clean text:<br/>Strip internal labels and invalid tags"]
 
-    CleanText --> Stage2["Stage 2: Independent Claim Verification\n(GroundingVerifier with granite3-dense:2b)"]
-    Stage2 --> ModelJSON["Prompt verifier to output JSON claims with:\n- claim\n- answer_quote\n- verdict\n- evidence_passage\n- evidence_quote"]
+    CleanText --> Stage2["Stage 2: Independent Claim Verification<br/>(GroundingVerifier with granite3-dense:2b)"]
+    Stage2 --> ModelJSON["Prompt verifier to output JSON claims with:<br/>claim, answer_quote, verdict,<br/>evidence_passage, evidence_quote"]
 
-    ModelJSON --> ParseJSON{Valid JSON & Non-empty claims?}
-    ParseJSON -- Error / Malformed --> Abstain2["Fail-Closed\nReturn INSUFFICIENT_ANSWER\ngrounded=False"]
-    ParseJSON -- Valid --> LexicalCheck["Lexical Containment Verification:<br/>1. normalize(answer_quote) in normalize(Answer)<br/>2. normalize(evidence_quote) in normalize(Passage Content)<br/>3. normalize(answer_quote) in normalize(evidence_quote)<br/>4. verdict == 'SUPPORTED'"]
+    ModelJSON --> ParseJSON{"Valid JSON and Non-empty claims?"}
+    ParseJSON -- "Error / Malformed" --> Abstain2["Fail-Closed<br/>Return INSUFFICIENT_ANSWER<br/>grounded=False"]
+    ParseJSON -- "Valid" --> LexicalCheck["Lexical Containment Verification:<br/>1. Answer quote exists in Answer<br/>2. Evidence quote exists in Passage<br/>3. Answer quote exists in Evidence quote<br/>4. Verdict is SUPPORTED"]
 
-    LexicalCheck --> VerdictCheck{Do all claims pass?}
-    VerdictCheck -- Failure on any claim --> Abstain3["Reject Answer\nReturn INSUFFICIENT_ANSWER\ngrounded=False"]
-    VerdictCheck -- All pass --> Deliver["Deliver Grounded Response\ngrounded=True with Verified Sources"]
+    LexicalCheck --> VerdictCheck{"Do all claims pass?"}
+    VerdictCheck -- "Failure on any claim" --> Abstain3["Reject Answer<br/>Return INSUFFICIENT_ANSWER<br/>grounded=False"]
+    VerdictCheck -- "All pass" --> Deliver["Deliver Grounded Response<br/>grounded=True with Verified Sources"]
 ```
 
 ### Citation Extraction & Sanitization (`AnswerGenerator`)
